@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
@@ -6,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import DashboardErrorBoundary from '@/components/dashboard/DashboardErrorBoundary';
+import { DashboardErrorBoundary } from '@/components/dashboard/DashboardErrorBoundary';
 
 // Lazy load components for better performance
 const Index = lazy(() => import('@/pages/Index'));
