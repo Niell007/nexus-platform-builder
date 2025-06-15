@@ -36,39 +36,6 @@ export type Database = {
         }
         Relationships: []
       }
-      files: {
-        Row: {
-          created_at: string
-          file_path: string
-          file_size: number | null
-          file_type: string | null
-          id: string
-          metadata: Json | null
-          name: string
-          uploaded_by: string | null
-        }
-        Insert: {
-          created_at?: string
-          file_path: string
-          file_size?: number | null
-          file_type?: string | null
-          id?: string
-          metadata?: Json | null
-          name: string
-          uploaded_by?: string | null
-        }
-        Update: {
-          created_at?: string
-          file_path?: string
-          file_size?: number | null
-          file_type?: string | null
-          id?: string
-          metadata?: Json | null
-          name?: string
-          uploaded_by?: string | null
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -99,89 +66,6 @@ export type Database = {
         }
         Relationships: []
       }
-      service_requests: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          priority: string | null
-          requested_date: string | null
-          service_id: string | null
-          status: string | null
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          priority?: string | null
-          requested_date?: string | null
-          service_id?: string | null
-          status?: string | null
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          priority?: string | null
-          requested_date?: string | null
-          service_id?: string | null
-          status?: string | null
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "service_requests_service_id_fkey"
-            columns: ["service_id"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      services: {
-        Row: {
-          category: string | null
-          created_at: string
-          description: string | null
-          features: string[] | null
-          id: string
-          image_url: string | null
-          name: string
-          price_range: string | null
-          updated_at: string
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          features?: string[] | null
-          id?: string
-          image_url?: string | null
-          name: string
-          price_range?: string | null
-          updated_at?: string
-        }
-        Update: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          features?: string[] | null
-          id?: string
-          image_url?: string | null
-          name?: string
-          price_range?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
       system_settings: {
         Row: {
           description: string | null
@@ -209,35 +93,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_favorites: {
-        Row: {
-          created_at: string
-          id: string
-          service_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          service_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          service_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_favorites_service_id_fkey"
-            columns: ["service_id"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
@@ -254,18 +109,6 @@ export type Database = {
           action_details?: Json
         }
         Returns: undefined
-      }
-      search_services: {
-        Args: { search_query: string }
-        Returns: {
-          id: string
-          name: string
-          description: string
-          category: string
-          price_range: string
-          features: string[]
-          relevance_score: number
-        }[]
       }
     }
     Enums: {
