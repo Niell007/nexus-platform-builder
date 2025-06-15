@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -21,7 +20,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ServiceBooking from '@/components/ServiceBooking';
 import { KPIStatCard } from './KPIStatCard';
 import { BookingChart } from './BookingChart';
-import { useDashboardData } from '@/hooks/useDashboardData';
+import { useLegacyDashboardData } from '@/hooks/useLegacyDashboardData';
 
 /**
  * Main Dashboard Component
@@ -31,7 +30,7 @@ const Dashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [showBookingModal, setShowBookingModal] = useState(false);
-  const { data, loading, error, refetch } = useDashboardData();
+  const { data, loading, error, refetch } = useLegacyDashboardData();
 
   const handleSignOut = async () => {
     await signOut();

@@ -10,6 +10,11 @@ export interface KPIMetric {
   icon: string;
   color: 'blue' | 'green' | 'red' | 'yellow' | 'purple';
   drillDownPath?: string;
+  description?: string;
+  trend?: {
+    value: number;
+    isPositive: boolean;
+  };
 }
 
 export interface ChartDataPoint {
@@ -44,4 +49,23 @@ export interface DashboardData {
   charts: TrendChart[];
   insights: UserInsight[];
   lastUpdated: string;
+}
+
+// Legacy types for backward compatibility
+export interface DashboardKPI extends Omit<KPIMetric, 'changeType'> {
+  // For backward compatibility with existing Dashboard.tsx
+}
+
+export interface BookingTrendData {
+  date: string;
+  bookings: number;
+  label: string;
+}
+
+export interface RecentBooking {
+  id: number;
+  service: string;
+  date: string;
+  status: 'Completed' | 'In Progress' | 'Scheduled';
+  provider: string;
 }

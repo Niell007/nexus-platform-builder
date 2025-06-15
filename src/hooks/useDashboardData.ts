@@ -1,43 +1,10 @@
 
 import { useState, useEffect } from 'react';
-
-export interface DashboardKPI {
-  id: string;
-  title: string;
-  value: string | number;
-  description: string;
-  icon: string;
-  trend?: {
-    value: number;
-    isPositive: boolean;
-  };
-  color?: string;
-}
-
-export interface BookingTrendData {
-  date: string;
-  bookings: number;
-  label: string;
-}
-
-export interface RecentBooking {
-  id: number;
-  service: string;
-  date: string;
-  status: 'Completed' | 'In Progress' | 'Scheduled';
-  provider: string;
-}
-
-export interface DashboardData {
-  kpis: DashboardKPI[];
-  bookingTrends: BookingTrendData[];
-  recentBookings: RecentBooking[];
-  lastUpdated: string;
-}
+import { DashboardData, KPIMetric, TrendChart, UserInsight } from '@/types/dashboard';
 
 /**
  * Dashboard Data Hook
- * Simulates live API data pull with real-time updates
+ * Provides real-time dashboard data with KPIs, charts, and insights
  */
 export const useDashboardData = () => {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -45,93 +12,120 @@ export const useDashboardData = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Generate mock booking trends for last 30 days
-  const generateBookingTrends = (): BookingTrendData[] => {
-    const trends: BookingTrendData[] = [];
+  const generateBookingTrends = (): TrendChart => {
+    const chartData: Array<{ date: string; value: number; label?: string }> = [];
     const now = new Date();
     
     for (let i = 29; i >= 0; i--) {
       const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
       const bookings = Math.floor(Math.random() * 15) + 5; // 5-20 bookings per day
       
-      trends.push({
+      chartData.push({
         date: date.toISOString().split('T')[0],
-        bookings,
+        value: bookings,
         label: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       });
     }
-    
-    return trends;
+
+    return {
+      id: 'booking-trends',
+      title: 'Booking Trends (Last 30 Days)',
+      data: chartData,
+      type: 'line',
+      color: '#3b82f6',
+      yAxisLabel: 'Bookings'
+    };
+  };
+
+  // Generate mock insights
+  const generateInsights = (): UserInsight[] => {
+    return [
+      {
+        id: 'insight-1',
+        title: 'Peak Booking Time',
+        description: 'Your busiest booking day is typically Tuesday. Consider offering promotions on slower days.',
+        type: 'recommendation',
+        priority: 'medium',
+        actionText: 'View Analytics',
+        actionPath: '/analytics',
+        timestamp: new Date().toISOString()
+      },
+      {
+        id: 'insight-2',
+        title: 'Service Growth',
+        description: 'Home cleaning services have increased by 25% this month.',
+        type: 'info',
+        priority: 'low',
+        timestamp: new Date().toISOString()
+      },
+      {
+        id: 'insight-3',
+        title: 'Customer Retention',
+        description: 'Customer satisfaction is high. 90% of clients book repeat services.',
+        type: 'info',
+        priority: 'high',
+        timestamp: new Date().toISOString()
+      }
+    ];
   };
 
   // Generate mock dashboard data
   const generateMockData = (): DashboardData => {
-    const bookingTrends = generateBookingTrends();
-    const totalBookings = bookingTrends.reduce((sum, day) => sum + day.bookings, 0);
-    const avgBookings = Math.round(totalBookings / bookingTrends.length);
+    const bookingChart = generateBookingTrends();
+    const totalBookings = bookingChart.data.reduce((sum, day) => sum + day.value, 0);
+    const avgBookings = Math.round(totalBookings / bookingChart.data.length);
     
+    const kpis: KPIMetric[] = [
+      {
+        id: 'total-bookings',
+        title: 'Total Bookings',
+        value: totalBookings,
+        description: 'Last 30 days',
+        icon: 'calendar',
+        changeType: 'increase',
+        change: 12.5,
+        color: 'blue',
+        trend: { value: 12.5, isPositive: true }
+      },
+      {
+        id: 'active-services',
+        title: 'Active Services',
+        value: 3,
+        description: 'Currently in progress',
+        icon: 'activity',
+        changeType: 'increase',
+        change: 25.0,
+        color: 'green',
+        trend: { value: 25.0, isPositive: true }
+      },
+      {
+        id: 'completed-services',
+        title: 'Completed',
+        value: Math.floor(totalBookings * 0.85),
+        description: 'Successfully finished',
+        icon: 'check-circle',
+        changeType: 'increase',
+        change: 8.3,
+        color: 'purple',
+        trend: { value: 8.3, isPositive: true }
+      },
+      {
+        id: 'avg-daily-bookings',
+        title: 'Daily Average',
+        value: avgBookings,
+        description: 'Bookings per day',
+        icon: 'trending-up',
+        changeType: 'increase',
+        change: 15.2,
+        color: 'yellow',
+        trend: { value: 15.2, isPositive: true }
+      }
+    ];
+
     return {
-      kpis: [
-        {
-          id: 'total-bookings',
-          title: 'Total Bookings',
-          value: totalBookings,
-          description: 'Last 30 days',
-          icon: 'calendar',
-          trend: { value: 12.5, isPositive: true },
-          color: 'text-blue-500'
-        },
-        {
-          id: 'active-services',
-          title: 'Active Services',
-          value: 3,
-          description: 'Currently in progress',
-          icon: 'activity',
-          trend: { value: 25.0, isPositive: true },
-          color: 'text-green-500'
-        },
-        {
-          id: 'completed-services',
-          title: 'Completed',
-          value: Math.floor(totalBookings * 0.85),
-          description: 'Successfully finished',
-          icon: 'check-circle',
-          trend: { value: 8.3, isPositive: true },
-          color: 'text-purple-500'
-        },
-        {
-          id: 'avg-daily-bookings',
-          title: 'Daily Average',
-          value: avgBookings,
-          description: 'Bookings per day',
-          icon: 'trending-up',
-          trend: { value: 15.2, isPositive: true },
-          color: 'text-yellow-500'
-        }
-      ],
-      bookingTrends,
-      recentBookings: [
-        {
-          id: 1,
-          service: 'Home Cleaning',
-          date: '2024-06-20',
-          status: 'Completed',
-          provider: 'Sarah Johnson'
-        },
-        {
-          id: 2,
-          service: 'Plumbing Repair',
-          date: '2024-06-18',
-          status: 'In Progress',
-          provider: 'Mike Wilson'
-        },
-        {
-          id: 3,
-          service: 'Electrical Work',
-          date: '2024-06-15',
-          status: 'Scheduled',
-          provider: 'Alex Chen'
-        }
-      ],
+      kpis,
+      charts: [bookingChart],
+      insights: generateInsights(),
       lastUpdated: new Date().toISOString()
     };
   };
