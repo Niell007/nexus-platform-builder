@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Shield, Zap, Users, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const Index = () => {
   const features = [
@@ -29,14 +30,17 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900">
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <nav className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Your App</h1>
-          <Link to="/auth">
-            <Button>Get Started</Button>
-          </Link>
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
+            <Link to="/auth">
+              <Button>Get Started</Button>
+            </Link>
+          </div>
         </nav>
       </header>
 
@@ -44,9 +48,9 @@ const Index = () => {
       <section className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-5xl font-bold tracking-tight mb-6">
           Production-Ready
-          <span className="text-blue-600"> Web Application</span>
+          <span className="text-blue-600 dark:text-blue-400"> Web Application</span>
         </h1>
-        <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+        <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
           A fully optimized, serverless web application with Supabase backend, 
           secure authentication, real-time updates, and AI-powered features.
         </p>
@@ -65,18 +69,18 @@ const Index = () => {
 
       {/* Features Grid */}
       <section className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">
+        <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">
           Enterprise-Grade Features
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+            <Card key={index} className="text-center hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <feature.icon className="h-12 w-12 mx-auto text-blue-600 mb-4" />
-                <CardTitle>{feature.title}</CardTitle>
+                <feature.icon className="h-12 w-12 mx-auto text-blue-600 dark:text-blue-400 mb-4" />
+                <CardTitle className="dark:text-white">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>{feature.description}</CardDescription>
+                <CardDescription className="dark:text-gray-300">{feature.description}</CardDescription>
               </CardContent>
             </Card>
           ))}
@@ -84,7 +88,7 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-blue-600 text-white py-16">
+      <section className="bg-blue-600 dark:bg-blue-800 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">
             Ready to Build Something Amazing?
@@ -102,7 +106,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 text-center text-gray-600">
+      <footer className="container mx-auto px-4 py-8 text-center text-gray-600 dark:text-gray-400">
         <p>&copy; 2024 Your App. Built with Lovable, Supabase, and modern web technologies.</p>
       </footer>
     </div>
