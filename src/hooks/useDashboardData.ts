@@ -1,129 +1,161 @@
 
 import { useState, useEffect } from 'react';
-import { DashboardData } from '@/types/dashboard';
 
-// Mock data generator for demonstration
-const generateMockData = (): DashboardData => {
-  const now = new Date();
-  const chartData = Array.from({ length: 7 }, (_, i) => ({
-    date: new Date(now.getTime() - (6 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    value: Math.floor(Math.random() * 100) + 50,
-  }));
-
-  return {
-    kpis: [
-      {
-        id: 'total-bookings',
-        title: 'Total Bookings',
-        value: 142,
-        previousValue: 128,
-        change: 10.9,
-        changeType: 'increase',
-        icon: 'calendar',
-        color: 'blue',
-        drillDownPath: '/dashboard/bookings'
-      },
-      {
-        id: 'revenue',
-        title: 'Monthly Revenue',
-        value: 15420,
-        previousValue: 13800,
-        change: 11.7,
-        changeType: 'increase',
-        unit: '$',
-        icon: 'trending-up',
-        color: 'green',
-        drillDownPath: '/dashboard/revenue'
-      },
-      {
-        id: 'completion-rate',
-        title: 'Completion Rate',
-        value: '94.2%',
-        previousValue: 91.5,
-        change: 2.7,
-        changeType: 'increase',
-        icon: 'check-circle',
-        color: 'purple',
-        drillDownPath: '/dashboard/performance'
-      },
-      {
-        id: 'active-services',
-        title: 'Active Services',
-        value: 8,
-        previousValue: 12,
-        change: -33.3,
-        changeType: 'decrease',
-        icon: 'activity',
-        color: 'yellow',
-        drillDownPath: '/dashboard/services'
-      }
-    ],
-    charts: [
-      {
-        id: 'bookings-trend',
-        title: 'Booking Trends (Last 7 Days)',
-        data: chartData,
-        type: 'line',
-        color: '#3b82f6',
-        yAxisLabel: 'Bookings',
-        drillDownPath: '/dashboard/analytics/bookings'
-      },
-      {
-        id: 'revenue-trend',
-        title: 'Revenue Trends (Last 7 Days)',
-        data: chartData.map(d => ({ ...d, value: d.value * 45 })),
-        type: 'bar',
-        color: '#10b981',
-        yAxisLabel: 'Revenue ($)',
-        drillDownPath: '/dashboard/analytics/revenue'
-      }
-    ],
-    insights: [
-      {
-        id: 'insight-1',
-        title: 'Peak Booking Hours',
-        description: 'Most bookings occur between 2-4 PM. Consider adjusting staff schedules.',
-        type: 'recommendation',
-        priority: 'high',
-        actionText: 'View Schedule',
-        actionPath: '/dashboard/scheduling',
-        timestamp: new Date().toISOString()
-      },
-      {
-        id: 'insight-2',
-        title: 'Service Completion Alert',
-        description: 'Home cleaning services have a 15% higher completion rate this month.',
-        type: 'info',
-        priority: 'medium',
-        timestamp: new Date().toISOString()
-      }
-    ],
-    lastUpdated: new Date().toISOString()
+export interface DashboardKPI {
+  id: string;
+  title: string;
+  value: string | number;
+  description: string;
+  icon: string;
+  trend?: {
+    value: number;
+    isPositive: boolean;
   };
-};
+  color?: string;
+}
 
+export interface BookingTrendData {
+  date: string;
+  bookings: number;
+  label: string;
+}
+
+export interface RecentBooking {
+  id: number;
+  service: string;
+  date: string;
+  status: 'Completed' | 'In Progress' | 'Scheduled';
+  provider: string;
+}
+
+export interface DashboardData {
+  kpis: DashboardKPI[];
+  bookingTrends: BookingTrendData[];
+  recentBookings: RecentBooking[];
+  lastUpdated: string;
+}
+
+/**
+ * Dashboard Data Hook
+ * Simulates live API data pull with real-time updates
+ */
 export const useDashboardData = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Simulate API call with delay
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // In a real app, this would be an API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const mockData = generateMockData();
-        setData(mockData);
-      } catch (err) {
-        setError('Failed to fetch dashboard data');
-        console.error('Dashboard data fetch error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Generate mock booking trends for last 30 days
+  const generateBookingTrends = (): BookingTrendData[] => {
+    const trends: BookingTrendData[] = [];
+    const now = new Date();
+    
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      const bookings = Math.floor(Math.random() * 15) + 5; // 5-20 bookings per day
+      
+      trends.push({
+        date: date.toISOString().split('T')[0],
+        bookings,
+        label: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      });
+    }
+    
+    return trends;
+  };
 
+  // Generate mock dashboard data
+  const generateMockData = (): DashboardData => {
+    const bookingTrends = generateBookingTrends();
+    const totalBookings = bookingTrends.reduce((sum, day) => sum + day.bookings, 0);
+    const avgBookings = Math.round(totalBookings / bookingTrends.length);
+    
+    return {
+      kpis: [
+        {
+          id: 'total-bookings',
+          title: 'Total Bookings',
+          value: totalBookings,
+          description: 'Last 30 days',
+          icon: 'calendar',
+          trend: { value: 12.5, isPositive: true },
+          color: 'text-blue-500'
+        },
+        {
+          id: 'active-services',
+          title: 'Active Services',
+          value: 3,
+          description: 'Currently in progress',
+          icon: 'activity',
+          trend: { value: 25.0, isPositive: true },
+          color: 'text-green-500'
+        },
+        {
+          id: 'completed-services',
+          title: 'Completed',
+          value: Math.floor(totalBookings * 0.85),
+          description: 'Successfully finished',
+          icon: 'check-circle',
+          trend: { value: 8.3, isPositive: true },
+          color: 'text-purple-500'
+        },
+        {
+          id: 'avg-daily-bookings',
+          title: 'Daily Average',
+          value: avgBookings,
+          description: 'Bookings per day',
+          icon: 'trending-up',
+          trend: { value: 15.2, isPositive: true },
+          color: 'text-yellow-500'
+        }
+      ],
+      bookingTrends,
+      recentBookings: [
+        {
+          id: 1,
+          service: 'Home Cleaning',
+          date: '2024-06-20',
+          status: 'Completed',
+          provider: 'Sarah Johnson'
+        },
+        {
+          id: 2,
+          service: 'Plumbing Repair',
+          date: '2024-06-18',
+          status: 'In Progress',
+          provider: 'Mike Wilson'
+        },
+        {
+          id: 3,
+          service: 'Electrical Work',
+          date: '2024-06-15',
+          status: 'Scheduled',
+          provider: 'Alex Chen'
+        }
+      ],
+      lastUpdated: new Date().toISOString()
+    };
+  };
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // In a real app, this would be an actual API call
+      const mockData = generateMockData();
+      setData(mockData);
+    } catch (err) {
+      setError('Failed to fetch dashboard data');
+      console.error('Dashboard data fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
 
     // Set up real-time updates (every 30 seconds)
@@ -131,5 +163,9 @@ export const useDashboardData = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return { data, loading, error, refetch: () => setData(generateMockData()) };
+  const refetch = () => {
+    fetchData();
+  };
+
+  return { data, loading, error, refetch };
 };
