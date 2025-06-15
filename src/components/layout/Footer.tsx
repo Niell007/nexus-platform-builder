@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Facebook, Twitter, LinkedIn, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -22,7 +22,7 @@ const Footer = () => {
                 <Twitter className="h-5 w-5" />
               </a>
               <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
-                <LinkedIn className="h-5 w-5" />
+                <Linkedin className="h-5 w-5" />
               </a>
               <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Instagram className="h-5 w-5" />

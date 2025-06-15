@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -14,6 +13,16 @@ export interface Service {
   image_url?: string;
   created_at: string;
   updated_at: string;
+}
+
+interface SearchResult {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  price_range: string;
+  features: string[];
+  relevance_score: number;
 }
 
 export interface ServiceRequest {
@@ -58,10 +67,19 @@ export const useServices = () => {
 
       const { data, error } = await supabase.rpc('search_services', {
         search_query: query
-      });
+      }) as { data: SearchResult[] | null, error: any };
 
       if (error) throw error;
-      return data || [];
+      
+      // Convert search results to Service format by adding missing fields
+      const services: Service[] = (data || []).map(result => ({
+        ...result,
+        image_url: undefined,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }));
+      
+      return services;
     } catch (error) {
       console.error('Search services error:', error);
       toast({
