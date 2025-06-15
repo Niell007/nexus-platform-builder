@@ -6,8 +6,12 @@ import { useLocation } from 'react-router-dom';
 
 declare global {
   interface Window {
-    hj: (...args: any[]) => void;
+    hj: {
+      (...args: any[]): void;
+      q?: any[];
+    };
     _hjSettings: { hjid: number; hjsv: number };
+    gtag: (...args: any[]) => void;
   }
 }
 
