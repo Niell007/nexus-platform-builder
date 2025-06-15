@@ -1,529 +1,347 @@
-"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ArrowRight, Shield, Zap, Users, Globe, Search, Calendar, Phone, Mail, Star, Play, ChevronDown, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import AISearchWidget from "@/components/AISearchWidget";
-import MediaGallery from "@/components/MediaGallery";
-import ServiceBooking from "@/components/ServiceBooking";
-import LiveChatWidget from "@/components/LiveChatWidget";
+import React from 'react';
+import Navbar from '@/components/layout/Navbar';
+import LiveChatWidget from '@/components/LiveChatWidget';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Star, MapPin, Phone, Clock, CheckCircle, ArrowRight, Search, Zap, Shield, Award } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Link } from 'react-router-dom';
+import SEOHead from '@/components/SEO/SEOHead';
 
 const Index = () => {
-  const [email, setEmail] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [showBookingModal, setShowBookingModal] = useState(false);
-
-  const heroSlides = [
-    {
-      title: "Professional Services On Demand",
-      subtitle: "Book trusted experts in seconds. Seamless scheduling, guaranteed quality.",
-      image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-      cta: "Get Started Today"
-    },
-    {
-      title: "AI-Powered Service Matching",
-      subtitle: "Our intelligent system connects you with the perfect professional for your needs.",
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=2126&q=80",
-      cta: "Discover AI Features"
-    },
-    {
-      title: "24/7 Customer Support",
-      subtitle: "Round-the-clock assistance ensuring your satisfaction every step of the way.",
-      image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80",
-      cta: "Contact Support"
-    }
-  ];
+  const { user } = useAuth();
 
   const services = [
     {
-      title: "Home Cleaning",
-      description: "Professional cleaning services with eco-friendly products and certified staff",
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "From $89",
+      id: 1,
+      name: "Premium Home Cleaning",
+      description: "Professional deep cleaning service for your home with eco-friendly products",
+      category: "Cleaning",
+      price: "$89-149",
       rating: 4.9,
-      category: "Home Services"
+      reviews: 127,
+      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop",
+      features: ["Deep Clean", "Eco-Friendly", "Insured", "Same Day"]
     },
     {
-      title: "Plumbing Services",
-      description: "Fast, reliable plumbing repairs and installations by licensed professionals",
-      image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "From $120",
+      id: 2,
+      name: "Expert Plumbing Repair",
+      description: "Licensed plumbers available 24/7 for emergency repairs and installations",
+      category: "Plumbing",
+      price: "$95-250",
       rating: 4.8,
-      category: "Repairs"
+      reviews: 89,
+      image: "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=400&h=300&fit=crop",
+      features: ["24/7 Service", "Licensed", "Emergency", "Warranty"]
     },
     {
-      title: "Electrical Work",
-      description: "Safe electrical installations and repairs by certified electricians",
-      image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "From $150",
-      rating: 4.9,
-      category: "Repairs"
-    },
-    {
-      title: "Landscaping",
-      description: "Transform your outdoor space with professional landscaping services",
-      image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "From $200",
+      id: 3,
+      name: "Professional Lawn Care",
+      description: "Complete lawn maintenance including mowing, trimming, and landscaping",
+      category: "Landscaping",
+      price: "$65-120",
       rating: 4.7,
-      category: "Outdoor"
-    },
-    {
-      title: "Interior Design",
-      description: "Professional interior design consultation and implementation",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "From $300",
-      rating: 4.9,
-      category: "Design"
-    },
-    {
-      title: "HVAC Services",
-      description: "Heating, ventilation, and air conditioning installation and maintenance",
-      image: "https://images.unsplash.com/photo-1621905252472-e8de8f82c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "From $180",
-      rating: 4.8,
-      category: "HVAC"
+      reviews: 156,
+      image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop",
+      features: ["Weekly Service", "Equipment Included", "Seasonal", "Organic Options"]
     }
   ];
 
   const testimonials = [
     {
       name: "Sarah Johnson",
-      role: "Homeowner",
-      content: "Absolutely fantastic service! The AI matching system found me the perfect cleaner within minutes. Professional, reliable, and exceeded expectations.",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+      text: "Absolutely fantastic service! The team was professional, punctual, and exceeded my expectations.",
+      service: "Home Cleaning",
+      location: "Downtown"
     },
     {
       name: "Michael Chen",
-      role: "Business Owner",
-      content: "The booking system is incredibly smooth. I've used this platform for multiple services and each time the quality has been outstanding.",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+      text: "Quick response time and fair pricing. Fixed my plumbing issue in under an hour!",
+      service: "Plumbing Repair",
+      location: "Westside"
     },
     {
-      name: "Emily Rodriguez",
-      role: "Property Manager",
-      content: "Game-changer for our property management company. The real-time tracking and professional network has streamlined all our maintenance needs.",
+      name: "Emma Rodriguez",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+      text: "My lawn has never looked better. Highly recommend their landscaping services.",
+      service: "Lawn Care",
+      location: "Northside"
     }
   ];
-
-  const features = [
-    {
-      icon: Shield,
-      title: "Verified Professionals",
-      description: "All service providers are background-checked, licensed, and insured for your peace of mind"
-    },
-    {
-      icon: Zap,
-      title: "Instant Booking",
-      description: "Book services in under 60 seconds with our streamlined AI-powered matching system"
-    },
-    {
-      icon: Users,
-      title: "24/7 Support",
-      description: "Round-the-clock customer support and real-time service tracking"
-    },
-    {
-      icon: Globe,
-      title: "Nationwide Coverage",
-      description: "Available in over 100 cities with expanding coverage nationwide"
-    }
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const handleBookingSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Booking submitted:", { email });
-    setShowBookingModal(true);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Search query:", searchQuery);
-  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
-      {/* Enhanced Navigation */}
-      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                ServicePro
-              </h1>
-            </div>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#home" className="hover:text-blue-400 transition-colors">Home</a>
-              <a href="#services" className="hover:text-blue-400 transition-colors">Services</a>
-              <a href="#testimonials" className="hover:text-blue-400 transition-colors">Reviews</a>
-              <a href="#contact" className="hover:text-blue-400 transition-colors">Contact</a>
-            </nav>
-
-            <div className="hidden md:flex items-center space-x-4">
-              <ThemeToggle />
-              <Button 
-                onClick={() => setShowBookingModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Book Now
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X /> : <Menu />}
-            </button>
-          </div>
-
-          {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-800">
-              <nav className="flex flex-col space-y-4">
-                <a href="#home" className="hover:text-blue-400 transition-colors">Home</a>
-                <a href="#services" className="hover:text-blue-400 transition-colors">Services</a>
-                <a href="#testimonials" className="hover:text-blue-400 transition-colors">Reviews</a>
-                <a href="#contact" className="hover:text-blue-400 transition-colors">Contact</a>
-                <Button 
-                  onClick={() => setShowBookingModal(true)}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 w-full"
-                >
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Book Now
-                </Button>
-              </nav>
-            </div>
-          )}
-        </div>
-      </header>
-
-      {/* Enhanced Hero Section with Carousel */}
-      <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out"
-          style={{ backgroundImage: `url('${heroSlides[currentSlide].image}')` }}
-        >
-          <div className="absolute inset-0 bg-black/60"></div>
-        </div>
+    <>
+      <SEOHead 
+        title="ServiceMaster Pro - Premium Professional Services"
+        description="Get instant access to trusted professionals for cleaning, plumbing, landscaping, and more. Book same-day service with verified, insured experts."
+        keywords="professional services, home cleaning, plumbing, landscaping, handyman, local services"
+        canonical="/"
+      />
+      
+      <div className="min-h-screen bg-background">
+        <Navbar />
         
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            {heroSlides[currentSlide].title}
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-3xl mx-auto">
-            {heroSlides[currentSlide].subtitle}
-          </p>
-          
-          {/* AI Search Widget Integration */}
-          <div className="mb-8 max-w-2xl mx-auto">
-            <AISearchWidget />
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={() => setShowBookingModal(true)}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8"
-            >
-              {heroSlides[currentSlide].cta}
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 border-white/30 text-white hover:bg-white/10">
-              <Play className="mr-2 h-5 w-5" />
-              Watch Demo
-            </Button>
-          </div>
-        </div>
-
-        {/* Carousel Indicators */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              className={`w-3 h-3 rounded-full transition-all ${
-                index === currentSlide ? 'bg-white' : 'bg-white/50'
-              }`}
-              onClick={() => setCurrentSlide(index)}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* Enhanced Features Section */}
-      <section className="py-20 bg-gray-900/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Why Choose ServicePro?
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Experience the future of service booking with our AI-powered platform
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all duration-300 hover:scale-105">
-                <CardHeader className="text-center">
-                  <feature.icon className="h-12 w-12 mx-auto text-blue-400 mb-4" />
-                  <CardTitle className="text-white">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-300 text-center">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced Services Grid */}
-      <section id="services" className="py-20 bg-black">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Popular Services
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Browse our most requested professional services
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <Card key={index} className="bg-gray-900 border-gray-700 hover:border-blue-500/50 transition-all duration-300 hover:scale-105 overflow-hidden group">
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={service.image} 
-                    alt={service.title}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-sm">
-                    {service.category}
-                  </div>
-                  <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-sm flex items-center">
-                    <Star className="w-3 h-3 mr-1 text-yellow-400" />
-                    {service.rating}
-                  </div>
-                </div>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-white">{service.title}</CardTitle>
-                    <span className="text-blue-400 font-semibold">{service.price}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-300 mb-4">
-                    {service.description}
-                  </CardDescription>
-                  <Button 
-                    onClick={() => setShowBookingModal(true)}
-                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-                  >
-                    Book Now
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Media Gallery Section */}
-      <MediaGallery items={[]} />
-
-      {/* Enhanced Testimonials */}
-      <section id="testimonials" className="py-20 bg-gray-900/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              What Our Customers Say
-            </h2>
-            <p className="text-xl text-gray-300">
-              Don't just take our word for it - hear from our satisfied customers
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all duration-300">
-                <CardHeader>
-                  <div className="flex items-center space-x-4">
-                    <img 
-                      src={testimonial.image} 
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div>
-                      <CardTitle className="text-white text-lg">{testimonial.name}</CardTitle>
-                      <CardDescription className="text-gray-400">{testimonial.role}</CardDescription>
-                    </div>
-                  </div>
-                  <div className="flex space-x-1">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 italic">"{testimonial.content}"</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced Booking Section */}
-      <section id="contact" className="py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Ready to Get Started?
-            </h2>
-            <p className="text-xl text-gray-300 mb-8">
-              Book your first service today and experience the difference
-            </p>
-            
-            <form onSubmit={handleBookingSubmit} className="bg-gray-800/50 p-8 rounded-xl border border-gray-700">
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <Input
-                  type="text"
-                  placeholder="Full Name"
-                  className="bg-gray-700/50 border-gray-600 text-white placeholder-gray-400"
-                  required
-                />
-                <Input
-                  type="email"
-                  placeholder="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-gray-700/50 border-gray-600 text-white placeholder-gray-400"
-                  required
-                />
+        {/* Hero Section */}
+        <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 text-white py-20">
+          <div className="absolute inset-0 bg-black/20"></div>
+          <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto text-center">
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+                Premium Professional
+                <span className="block text-yellow-400">Services</span>
+              </h1>
+              <p className="text-xl md:text-2xl mb-8 text-blue-100 animate-fade-in">
+                Connect with verified, insured professionals for all your home and business needs. 
+                Same-day service available.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
+                {user ? (
+                  <Link to="/dashboard">
+                    <Button size="lg" className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-4 text-lg">
+                      View Dashboard
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/auth">
+                    <Button size="lg" className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-4 text-lg">
+                      Get Started
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </Link>
+                )}
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 text-lg"
+                  onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  Browse Services
+                </Button>
               </div>
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <Input
-                  type="tel"
-                  placeholder="Phone Number"
-                  className="bg-gray-700/50 border-gray-600 text-white placeholder-gray-400"
-                  required
-                />
-                <select className="bg-gray-700/50 border border-gray-600 text-white rounded-md px-3 py-2">
-                  <option value="">Select Service</option>
-                  {services.map((service, index) => (
-                    <option key={index} value={service.title}>{service.title}</option>
-                  ))}
-                </select>
-              </div>
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg py-3"
-              >
-                Book Service Now
-                <Calendar className="ml-2 h-5 w-5" />
-              </Button>
-            </form>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Enhanced Footer */}
-      <footer className="bg-black border-t border-gray-800 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <Zap className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  ServicePro
-                </h3>
-              </div>
-              <p className="text-gray-400">
-                The future of professional services, powered by AI and delivered with excellence.
+        {/* Features Section */}
+        <section className="py-16 bg-gray-50 dark:bg-gray-900">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose ServiceMaster Pro?</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                We connect you with the best professionals in your area
               </p>
             </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4">Services</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-blue-400 transition-colors">Home Cleaning</a></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors">Plumbing</a></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors">Electrical</a></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors">HVAC</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link to="/auth" className="hover:text-blue-400 transition-colors">About Us</Link></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors">Press</a></li>
-                <li><Link to="/admin" className="hover:text-blue-400 transition-colors">Admin</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4">Contact</h4>
-              <div className="space-y-2 text-gray-400">
-                <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4" />
-                  <span>1-800-SERVICE</span>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center p-6">
+                <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="h-8 w-8 text-blue-600" />
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4" />
-                  <span>hello@servicepro.com</span>
+                <h3 className="text-xl font-semibold mb-2">Verified & Insured</h3>
+                <p className="text-muted-foreground">All professionals are background-checked, licensed, and fully insured</p>
+              </div>
+              <div className="text-center p-6">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Zap className="h-8 w-8 text-green-600" />
                 </div>
+                <h3 className="text-xl font-semibold mb-2">Same-Day Service</h3>
+                <p className="text-muted-foreground">Book today, get service today with our network of available professionals</p>
+              </div>
+              <div className="text-center p-6">
+                <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Award className="h-8 w-8 text-yellow-600" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Satisfaction Guaranteed</h3>
+                <p className="text-muted-foreground">100% satisfaction guarantee or we'll make it right</p>
               </div>
             </div>
           </div>
-          
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 ServicePro. Built with cutting-edge technology and powered by AI. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+        </section>
 
-      {/* Booking Modal */}
-      {showBookingModal && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <ServiceBooking onClose={() => setShowBookingModal(false)} />
+        {/* Services Section */}
+        <section id="services" className="py-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Popular Services</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Professional services for every need
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {services.map((service) => (
+                <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img 
+                      src={service.image} 
+                      alt={service.name}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <Badge className="absolute top-4 left-4 bg-blue-600">{service.category}</Badge>
+                  </div>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-xl">{service.name}</CardTitle>
+                      <div className="text-lg font-bold text-green-600">{service.price}</div>
+                    </div>
+                    <CardDescription>{service.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <span className="ml-1 text-sm font-medium">{service.rating}</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">({service.reviews} reviews)</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {service.features.map((feature, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {feature}
+                        </Badge>
+                      ))}
+                    </div>
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                      Book Now
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="text-center mt-12">
+              <Button variant="outline" size="lg">
+                View All Services
+                <Search className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        </section>
 
-      {/* Live Chat Widget */}
-      <LiveChatWidget />
-    </div>
+        {/* Testimonials Section */}
+        <section className="py-16 bg-gray-50 dark:bg-gray-900">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Customers Say</h2>
+              <p className="text-xl text-muted-foreground">
+                Join thousands of satisfied customers
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial, index) => (
+                <Card key={index} className="border-0 shadow-lg">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-muted-foreground mb-4 italic">"{testimonial.text}"</p>
+                    <div className="border-t pt-4">
+                      <p className="font-semibold">{testimonial.name}</p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>{testimonial.service}</span>
+                        <span>•</span>
+                        <div className="flex items-center">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          {testimonial.location}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
+            <p className="text-xl mb-8 text-blue-100">
+              Book a professional service today and experience the difference
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              {user ? (
+                <Link to="/dashboard">
+                  <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8">
+                    Book Service Now
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/auth">
+                  <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8">
+                    Create Account
+                  </Button>
+                </Link>
+              )}
+              <div className="flex items-center gap-2 text-blue-100">
+                <Phone className="h-4 w-4" />
+                <span>Or call: (555) 123-4567</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-gray-900 text-white py-12">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid md:grid-cols-4 gap-8">
+              <div>
+                <h3 className="text-lg font-semibold mb-4">ServiceMaster Pro</h3>
+                <p className="text-gray-400 mb-4">
+                  Your trusted partner for professional services. Quality, reliability, and satisfaction guaranteed.
+                </p>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <Clock className="h-4 w-4" />
+                  <span>Available 24/7</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Popular Services</h3>
+                <ul className="space-y-2 text-gray-400">
+                  <li><a href="#" className="hover:text-white transition-colors">Home Cleaning</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Plumbing</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Landscaping</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Electrical</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Company</h3>
+                <ul className="space-y-2 text-gray-400">
+                  <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
+                <div className="space-y-2 text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    <span>(555) 123-4567</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>123 Service St, Your City</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+              <p>&copy; 2024 ServiceMaster Pro. All rights reserved.</p>
+            </div>
+          </div>
+        </footer>
+
+        <LiveChatWidget />
+      </div>
+    </>
   );
 };
 
