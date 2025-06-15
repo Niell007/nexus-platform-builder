@@ -47,7 +47,15 @@ export const useBookings = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setBookings(data || []);
+      
+      // Cast the data to our Booking type with proper status typing
+      const typedBookings: Booking[] = (data || []).map(item => ({
+        ...item,
+        status: item.status as Booking['status'],
+        priority: item.priority as Booking['priority']
+      }));
+      
+      setBookings(typedBookings);
     } catch (error) {
       console.error('Error fetching bookings:', error);
       toast({
