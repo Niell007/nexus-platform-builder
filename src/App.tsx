@@ -7,9 +7,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import AuthPage from "@/components/auth/AuthPage";
-import Dashboard from "@/components/dashboard/Dashboard";
 import Admin from "@/pages/Admin";
-import Index from "./pages/Index";
+import Home from "@/pages/Home";
+import Services from "@/pages/Services";
+import UserDashboard from "@/pages/UserDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,7 +19,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+    </div>;
   }
   
   if (!user) {
@@ -32,7 +35,9 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+    </div>;
   }
   
   if (user) {
@@ -46,6 +51,8 @@ const AppContent = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/services" element={<Services />} />
         <Route 
           path="/auth" 
           element={
@@ -58,7 +65,7 @@ const AppContent = () => {
           path="/dashboard" 
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <UserDashboard />
             </ProtectedRoute>
           } 
         />
@@ -68,14 +75,6 @@ const AppContent = () => {
             <ProtectedRoute>
               <Admin />
             </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/" 
-          element={
-            <PublicRoute>
-              <Index />
-            </PublicRoute>
           } 
         />
         <Route path="*" element={<NotFound />} />
