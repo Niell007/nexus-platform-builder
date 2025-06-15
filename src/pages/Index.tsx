@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -8,12 +7,17 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, Shield, Zap, Users, Globe, Search, Calendar, Phone, Mail, Star, Play, ChevronDown, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import AISearchWidget from "@/components/AISearchWidget";
+import MediaGallery from "@/components/MediaGallery";
+import ServiceBooking from "@/components/ServiceBooking";
+import LiveChatWidget from "@/components/LiveChatWidget";
 
 const Index = () => {
   const [email, setEmail] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   const heroSlides = [
     {
@@ -143,13 +147,12 @@ const Index = () => {
 
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // This would integrate with your booking system
     console.log("Booking submitted:", { email });
+    setShowBookingModal(true);
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // This would integrate with AI search functionality
     console.log("Search query:", searchQuery);
   };
 
@@ -178,7 +181,10 @@ const Index = () => {
 
             <div className="hidden md:flex items-center space-x-4">
               <ThemeToggle />
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+              <Button 
+                onClick={() => setShowBookingModal(true)}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+              >
                 <Calendar className="w-4 h-4 mr-2" />
                 Book Now
               </Button>
@@ -201,7 +207,10 @@ const Index = () => {
                 <a href="#services" className="hover:text-blue-400 transition-colors">Services</a>
                 <a href="#testimonials" className="hover:text-blue-400 transition-colors">Reviews</a>
                 <a href="#contact" className="hover:text-blue-400 transition-colors">Contact</a>
-                <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 w-full">
+                <Button 
+                  onClick={() => setShowBookingModal(true)}
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 w-full"
+                >
                   <Calendar className="w-4 h-4 mr-2" />
                   Book Now
                 </Button>
@@ -228,27 +237,17 @@ const Index = () => {
             {heroSlides[currentSlide].subtitle}
           </p>
           
-          {/* AI Search Bar */}
-          <form onSubmit={handleSearch} className="mb-8 max-w-2xl mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <Input
-                  type="text"
-                  placeholder="What service do you need? (e.g., 'clean my house', 'fix leaky faucet')"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 py-3 bg-white/10 backdrop-blur-md border-gray-600 text-white placeholder-gray-400"
-                />
-              </div>
-              <Button type="submit" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8">
-                Search
-              </Button>
-            </div>
-          </form>
+          {/* AI Search Widget Integration */}
+          <div className="mb-8 max-w-2xl mx-auto">
+            <AISearchWidget />
+          </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8">
+            <Button 
+              size="lg" 
+              onClick={() => setShowBookingModal(true)}
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8"
+            >
               {heroSlides[currentSlide].cta}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -342,7 +341,10 @@ const Index = () => {
                   <CardDescription className="text-gray-300 mb-4">
                     {service.description}
                   </CardDescription>
-                  <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+                  <Button 
+                    onClick={() => setShowBookingModal(true)}
+                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                  >
                     Book Now
                   </Button>
                 </CardContent>
@@ -351,6 +353,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Media Gallery Section */}
+      <MediaGallery items={[]} />
 
       {/* Enhanced Testimonials */}
       <section id="testimonials" className="py-20 bg-gray-900/30">
@@ -506,6 +511,18 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Booking Modal */}
+      {showBookingModal && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <ServiceBooking onClose={() => setShowBookingModal(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Live Chat Widget */}
+      <LiveChatWidget />
     </div>
   );
 };

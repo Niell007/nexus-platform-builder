@@ -32,13 +32,12 @@ const ServiceBooking: React.FC<ServiceBookingProps> = ({ serviceTitle, onClose }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // This would integrate with your booking system
     console.log('Booking submitted:', formData);
     alert('Booking request submitted! We will contact you shortly.');
     if (onClose) onClose();
   };
 
-  const handleInputChange = (e: React.TargetEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
