@@ -1,26 +1,24 @@
+
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { 
-  Users, 
   Activity, 
-  TrendingUp, 
-  Shield, 
   Calendar, 
-  Settings, 
-  Home, 
-  LogOut,
   CheckCircle,
   RefreshCw
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ServiceBooking from '@/components/ServiceBooking';
 import { KPIStatCard } from './KPIStatCard';
 import { BookingChart } from './BookingChart';
 import { useLegacyDashboardData } from '@/hooks/useLegacyDashboardData';
+import { DashboardHeader } from './DashboardHeader';
+import { WelcomeSection } from './WelcomeSection';
+import { QuickActions } from './QuickActions';
+import { useServiceBookingModal } from '@/hooks/useServiceBookingModal';
 
 /**
  * Main Dashboard Component
@@ -29,7 +27,7 @@ import { useLegacyDashboardData } from '@/hooks/useLegacyDashboardData';
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [showBookingModal, setShowBookingModal] = useState(false);
+  const { showBookingModal, openBookingModal, closeBookingModal } = useServiceBookingModal();
   const { data, loading, error, refetch } = useLegacyDashboardData();
 
   const handleSignOut = async () => {
@@ -42,8 +40,11 @@ const Dashboard = () => {
     calendar: Calendar,
     activity: Activity,
     'check-circle': CheckCircle,
-    'trending-up': TrendingUp,
+    'trending-up': Activity,
   };
+
+  // Get user display name
+  const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0];
 
   if (loading) {
     return (
@@ -68,10 +69,10 @@ const Dashboard = () => {
         data-testid="dashboard-error"
       >
         <p className="text-red-600 mb-4">{error}</p>
-        <Button onClick={refetch} variant="outline">
-          <RefreshCw className="mr-2 h-4 w-4" />
+        <button onClick={refetch} className="flex items-center gap-2 px-4 py-2 border rounded">
+          <RefreshCw className="h-4 w-4" />
           Try Again
-        </Button>
+        </button>
       </div>
     );
   }
@@ -79,79 +80,10 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation Header */}
-      <header 
-        className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-        role="banner"
-        data-testid="dashboard-header"
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Link 
-                to="/" 
-                className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm"
-                aria-label="Go to homepage"
-                data-testid="home-link"
-              >
-                <Home className="h-5 w-5" aria-hidden="true" />
-                <span className="font-semibold">ServicePro</span>
-              </Link>
-              <nav aria-label="Breadcrumb">
-                <span className="text-muted-foreground">/ Dashboard</span>
-              </nav>
-            </div>
-            
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <Button
-                onClick={() => setShowBookingModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                aria-label="Book a new service"
-                data-testid="book-service-button"
-              >
-                <Calendar className="w-4 h-4 mr-2" aria-hidden="true" />
-                <span className="hidden sm:inline">Book Service</span>
-                <span className="sm:hidden">Book</span>
-              </Button>
-              
-              <Link to="/admin">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                  aria-label="Go to admin panel"
-                  data-testid="admin-link"
-                >
-                  <Shield className="w-4 h-4 mr-2" aria-hidden="true" />
-                  <span className="hidden sm:inline">Admin</span>
-                </Button>
-              </Link>
-              
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                aria-label="Open settings"
-                data-testid="settings-button"
-              >
-                <Settings className="w-4 h-4 mr-2" aria-hidden="true" />
-                <span className="hidden sm:inline">Settings</span>
-              </Button>
-              
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleSignOut}
-                className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                aria-label="Sign out of your account"
-                data-testid="signout-button"
-              >
-                <LogOut className="w-4 h-4 mr-2" aria-hidden="true" />
-                <span className="hidden sm:inline">Sign Out</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader 
+        onBookService={openBookingModal}
+        onSignOut={handleSignOut}
+      />
       
       <main 
         className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
@@ -159,40 +91,11 @@ const Dashboard = () => {
         data-testid="dashboard-main"
       >
         {/* Welcome Section */}
-        <section className="mb-8" aria-labelledby="welcome-heading">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 
-                id="welcome-heading"
-                className="text-2xl sm:text-3xl font-bold tracking-tight"
-                data-testid="welcome-heading"
-              >
-                Welcome back, {user?.user_metadata?.full_name || user?.email?.split('@')[0]}!
-              </h1>
-              <p className="text-muted-foreground">
-                Manage your services and track your bookings from your personal dashboard.
-              </p>
-            </div>
-            
-            {data && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  Last updated: {new Date(data.lastUpdated).toLocaleTimeString()}
-                </span>
-                <Button 
-                  onClick={refetch} 
-                  variant="outline" 
-                  size="sm"
-                  aria-label="Refresh dashboard data"
-                  data-testid="refresh-button"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  <span className="sr-only">Refresh</span>
-                </Button>
-              </div>
-            )}
-          </div>
-        </section>
+        <WelcomeSection 
+          userName={userName}
+          lastUpdated={data?.lastUpdated}
+          onRefresh={refetch}
+        />
 
         {/* KPI Stats Grid */}
         <section 
@@ -242,54 +145,7 @@ const Dashboard = () => {
             )}
 
             {/* Quick Actions */}
-            <Card data-testid="quick-actions-card">
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>
-                  Manage your services and account
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Button 
-                    onClick={() => setShowBookingModal(true)}
-                    className="h-16 sm:h-20 flex-col space-y-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                    aria-label="Book a new service"
-                    data-testid="quick-book-service"
-                  >
-                    <Calendar className="h-6 w-6" aria-hidden="true" />
-                    <span>Book New Service</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-16 sm:h-20 flex-col space-y-2 focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                    aria-label="View your active bookings"
-                    data-testid="quick-active-bookings"
-                  >
-                    <Activity className="h-6 w-6" aria-hidden="true" />
-                    <span>Active Bookings</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-16 sm:h-20 flex-col space-y-2 focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                    aria-label="View your service history"
-                    data-testid="quick-service-history"
-                  >
-                    <TrendingUp className="h-6 w-6" aria-hidden="true" />
-                    <span>Service History</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-16 sm:h-20 flex-col space-y-2 focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                    aria-label="Open account settings"
-                    data-testid="quick-account-settings"
-                  >
-                    <Settings className="h-6 w-6" aria-hidden="true" />
-                    <span>Account Settings</span>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <QuickActions onBookService={openBookingModal} />
           </section>
           
           {/* Recent Bookings */}
@@ -349,7 +205,7 @@ const Dashboard = () => {
           data-testid="booking-modal"
         >
           <div className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <ServiceBooking onClose={() => setShowBookingModal(false)} />
+            <ServiceBooking onClose={closeBookingModal} />
           </div>
         </div>
       )}
