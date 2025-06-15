@@ -63,6 +63,14 @@ const AppContent = () => {
           } 
         />
         <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute>
+              <Admin />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
           path="/" 
           element={
             <PublicRoute>
