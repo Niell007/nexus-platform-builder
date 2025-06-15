@@ -37,14 +37,18 @@ export const useLocalization = () => {
       'CA': { currency: 'CAD', units: 'metric', dateFormat: 'DD/MM/YYYY', decimalSeparator: '.' },
     };
 
-    const settings = regionalSettings[region] || regionalSettings['US'];
+    const settings = regionalSettings[region || 'US'] || regionalSettings['US'];
 
-    setLocale({
-      language,
+    setLocale(prev => ({
+      ...prev,
+      language: language || 'en',
       region: region || 'US',
       timezone,
-      ...settings
-    });
+      currency: settings.currency || prev.currency,
+      units: settings.units || prev.units,
+      dateFormat: settings.dateFormat || prev.dateFormat,
+      decimalSeparator: settings.decimalSeparator || prev.decimalSeparator
+    }));
   }, []);
 
   const formatCurrency = (amount: number) => {

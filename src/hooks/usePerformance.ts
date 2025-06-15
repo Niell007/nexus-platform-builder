@@ -19,6 +19,11 @@ export const usePerformance = () => {
   });
 
   useEffect(() => {
+    // Check if PerformanceObserver is available
+    if (typeof PerformanceObserver === 'undefined') {
+      return;
+    }
+
     // Measure FCP (First Contentful Paint)
     const observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
@@ -27,7 +32,12 @@ export const usePerformance = () => {
         }
       }
     });
-    observer.observe({ entryTypes: ['paint'] });
+    
+    try {
+      observer.observe({ entryTypes: ['paint'] });
+    } catch (e) {
+      console.warn('Performance Observer not supported for paint entries');
+    }
 
     // Measure LCP (Largest Contentful Paint)
     const lcpObserver = new PerformanceObserver((list) => {
@@ -35,11 +45,17 @@ export const usePerformance = () => {
       const lastEntry = entries[entries.length - 1];
       setMetrics(prev => ({ ...prev, lcp: lastEntry.startTime }));
     });
-    lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+    
+    try {
+      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+    } catch (e) {
+      console.warn('Performance Observer not supported for LCP entries');
+    }
 
     // Measure TTFB (Time to First Byte)
-    const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-    if (navEntry) {
+    const navEntries = performance.getEntriesByType('navigation');
+    if (navEntries.length > 0) {
+      const navEntry = navEntries[0] as PerformanceNavigationTiming;
       setMetrics(prev => ({ ...prev, ttfb: navEntry.responseStart - navEntry.requestStart }));
     }
 
