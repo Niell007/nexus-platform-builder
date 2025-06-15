@@ -12,6 +12,7 @@ import Dashboard from "@/components/dashboard/Dashboard";
 import Admin from "@/pages/Admin";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
+import UserDashboardPage from "./pages/UserDashboardPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,6 +62,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/user-dashboard" 
+          element={
+            <ProtectedRoute>
+              <UserDashboardPage />
             </ProtectedRoute>
           } 
         />
