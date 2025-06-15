@@ -9,7 +9,9 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import AuthPage from "@/components/auth/AuthPage";
 import Dashboard from "@/components/dashboard/Dashboard";
 import Admin from "@/pages/Admin";
-import Index from "./pages/Index";
+import Home from "./pages/Home";
+import Services from "./pages/Services";
+import UserPage from "./pages/UserPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,7 +20,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading...</div>;
   }
   
   if (!user) {
@@ -32,11 +34,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
-  
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading...</div>;
   }
   
   return <>{children}</>;
@@ -71,10 +69,26 @@ const AppContent = () => {
           } 
         />
         <Route 
+          path="/user" 
+          element={
+            <ProtectedRoute>
+              <UserPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/services" 
+          element={
+            <PublicRoute>
+              <Services />
+            </PublicRoute>
+          } 
+        />
+        <Route 
           path="/" 
           element={
             <PublicRoute>
-              <Index />
+              <Home />
             </PublicRoute>
           } 
         />
