@@ -1,115 +1,69 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import AuthPage from "@/components/auth/AuthPage";
-import Dashboard from "@/components/dashboard/Dashboard";
-import Admin from "@/pages/Admin";
-import Index from "./pages/Index";
-import Services from "./pages/Services";
-import UserDashboardPage from "./pages/UserDashboardPage";
-import NotFound from "./pages/NotFound";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import DashboardErrorBoundary from '@/components/dashboard/DashboardErrorBoundary';
 
-const queryClient = new QueryClient();
+// Lazy load components for better performance
+const Index = lazy(() => import('@/pages/Index'));
+const About = lazy(() => import('@/pages/About'));
+const Services = lazy(() => import('@/pages/Services'));
+const UserDashboardPage = lazy(() => import('@/pages/UserDashboardPage'));
+const AuthPage = lazy(() => import('@/components/auth/AuthPage'));
+const Admin = lazy(() => import('@/pages/Admin'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
-  
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-  
-  return <>{children}</>;
-};
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
-const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
-  
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
-  }
-  
-  return <>{children}</>;
-};
-
-const AppContent = () => {
+function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route 
-          path="/auth" 
-          element={
-            <PublicRoute>
-              <AuthPage />
-            </PublicRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard" 
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/user-dashboard" 
-          element={
-            <ProtectedRoute>
-              <UserDashboardPage />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/admin" 
-          element={
-            <ProtectedRoute>
-              <Admin />
-            </ProtectedRoute>
-          } 
-        />
-        <Route path="/services" element={<Services />} />
-        <Route 
-          path="/" 
-          element={
-            <PublicRoute>
-              <Index />
-            </PublicRoute>
-          } 
-        />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
-  );
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
     <HelmetProvider>
-      <ThemeProvider>
-        <TooltipProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
           <AuthProvider>
-            <Toaster />
-            <Sonner />
-            <AppContent />
+            <Router>
+              <div className="min-h-screen bg-background font-sans antialiased">
+                <Suspense fallback={
+                  <div className="flex items-center justify-center min-h-screen">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                }>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/services" element={<Services />} />
+                    <Route path="/auth" element={<AuthPage />} />
+                    <Route 
+                      path="/dashboard" 
+                      element={
+                        <DashboardErrorBoundary>
+                          <UserDashboardPage />
+                        </DashboardErrorBoundary>
+                      } 
+                    />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+                <Toaster />
+              </div>
+            </Router>
           </AuthProvider>
-        </TooltipProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </HelmetProvider>
-  </QueryClientProvider>
-);
+  );
+}
 
 export default App;
