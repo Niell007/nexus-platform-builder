@@ -6,6 +6,8 @@ import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { DashboardErrorBoundary } from '@/components/dashboard/DashboardErrorBoundary';
+import { ServiceWorkerProvider } from '@/components/PWA/ServiceWorkerProvider';
+import { GoogleAnalytics } from '@/components/Analytics/GoogleAnalytics';
 
 // Lazy load components for better performance
 const Index = lazy(() => import('@/pages/Index'));
@@ -31,33 +33,36 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <AuthProvider>
-            <Router>
-              <div className="min-h-screen bg-background font-sans antialiased">
-                <Suspense fallback={
-                  <div className="flex items-center justify-center min-h-screen">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                }>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/services" element={<Services />} />
-                    <Route path="/auth" element={<AuthPage />} />
-                    <Route 
-                      path="/dashboard" 
-                      element={
-                        <DashboardErrorBoundary>
-                          <UserDashboardPage />
-                        </DashboardErrorBoundary>
-                      } 
-                    />
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
-                <Toaster />
-              </div>
-            </Router>
+            <ServiceWorkerProvider>
+              <Router>
+                <div className="min-h-screen bg-background font-sans antialiased">
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center min-h-screen">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                  }>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/services" element={<Services />} />
+                      <Route path="/auth" element={<AuthPage />} />
+                      <Route 
+                        path="/dashboard" 
+                        element={
+                          <DashboardErrorBoundary>
+                            <UserDashboardPage />
+                          </DashboardErrorBoundary>
+                        } 
+                      />
+                      <Route path="/admin" element={<Admin />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                  <Toaster />
+                  <GoogleAnalytics gaId="GA_TRACKING_ID" />
+                </div>
+              </Router>
+            </ServiceWorkerProvider>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
