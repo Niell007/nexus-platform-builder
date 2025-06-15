@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { ServiceCard } from './ServiceCard';
 import { useServices } from '@/hooks/useServices';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';

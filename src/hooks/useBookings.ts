@@ -7,17 +7,19 @@ export interface Booking {
   id: string;
   user_id: string;
   service_id?: string;
-  service_name: string;
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string;
-  service_address: string;
-  preferred_date: string;
-  preferred_time: string;
+  title: string;
   description?: string;
   status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
+  priority: 'low' | 'medium' | 'high';
+  requested_date?: string;
   created_at: string;
   updated_at: string;
+  // Extended fields for display
+  customer_name?: string;
+  customer_email?: string;
+  customer_phone?: string;
+  service_address?: string;
+  preferred_time?: string;
 }
 
 export interface BookingFormData {
@@ -40,7 +42,7 @@ export const useBookings = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('bookings')
+        .from('service_requests')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -69,19 +71,24 @@ export const useBookings = () => {
 
       const bookingData = {
         user_id: user.id,
-        service_name: formData.service,
-        customer_name: formData.name,
-        customer_email: formData.email,
-        customer_phone: formData.phone,
-        service_address: formData.address,
-        preferred_date: formData.date,
-        preferred_time: formData.time,
-        description: formData.description || null,
-        status: 'pending' as const
+        title: `${formData.service} - ${formData.name}`,
+        description: `
+Service: ${formData.service}
+Customer: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone}
+Address: ${formData.address}
+Preferred Date: ${formData.date}
+Preferred Time: ${formData.time}
+Additional Details: ${formData.description || 'None'}
+        `.trim(),
+        status: 'pending' as const,
+        priority: 'medium' as const,
+        requested_date: formData.date
       };
 
       const { data, error } = await supabase
-        .from('bookings')
+        .from('service_requests')
         .insert([bookingData])
         .select()
         .single();
@@ -112,7 +119,7 @@ export const useBookings = () => {
     try {
       setLoading(true);
       const { error } = await supabase
-        .from('bookings')
+        .from('service_requests')
         .update({ status, updated_at: new Date().toISOString() })
         .eq('id', bookingId);
 
