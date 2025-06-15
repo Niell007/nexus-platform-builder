@@ -9,6 +9,9 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { DashboardErrorBoundary } from '@/components/dashboard/DashboardErrorBoundary';
 import { ServiceWorkerProvider } from '@/components/PWA/ServiceWorkerProvider';
 import { GoogleAnalytics } from '@/components/Analytics/GoogleAnalytics';
+import { AdvancedAnalytics } from '@/components/Analytics/AdvancedAnalytics';
+import LiveChatWidget from '@/components/LiveChatWidget';
+import PerformanceMonitor from '@/components/Performance/PerformanceMonitor';
 
 // Lazy load components for better performance
 const Index = lazy(() => import('@/pages/Index'));
@@ -61,8 +64,15 @@ function App() {
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
+                  
+                  {/* Global Components */}
                   <Toaster />
+                  <LiveChatWidget />
+                  <PerformanceMonitor />
+                  
+                  {/* Analytics */}
                   <GoogleAnalytics gaId="GA_TRACKING_ID" />
+                  <AdvancedAnalytics hotjarId="YOUR_HOTJAR_ID" enableHeatmaps={true} />
                 </div>
               </Router>
             </ServiceWorkerProvider>

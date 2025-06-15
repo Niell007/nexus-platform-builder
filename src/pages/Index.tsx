@@ -8,6 +8,7 @@ import { SearchWidget } from '@/components/SearchWidget';
 import { BlogSection } from '@/components/Content/BlogSection';
 import { TestimonialsSection } from '@/components/Content/TestimonialsSection';
 import { EnhancedBookingForm } from '@/components/Forms/EnhancedBookingForm';
+import OptimizedImage from '@/components/Media/OptimizedImage';
 
 const Index = () => {
   const [selectedService, setSelectedService] = useState<string>('');
@@ -97,20 +98,29 @@ const Index = () => {
       <div className="min-h-screen bg-background">
         <Navbar />
         
-        {/* Hero Section */}
+        {/* Hero Section with Optimized Background */}
         <section className="relative py-20 sm:py-32 overflow-hidden">
-          <div className="absolute inset-0 gradient-bg-subtle opacity-50"></div>
+          <div className="absolute inset-0">
+            <OptimizedImage
+              src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&h=1080&fit=crop"
+              alt="Professional home services background"
+              className="w-full h-full object-cover"
+              priority={true}
+              placeholder="blur"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
+          </div>
           
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div className="max-w-4xl mx-auto text-center">
               <div className="animate-fade-in">
-                <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6">
+                <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 text-white">
                   Your Home, Our Expertise
                   <br />
                   <span className="gradient-text">Trusted Professional Services</span>
                 </h1>
                 
-                <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+                <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
                   Connecting you with verified professionals for all your home service needs. 
                   Quality service, trusted providers, competitive pricing.
                 </p>
