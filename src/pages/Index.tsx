@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEOHead from '@/components/SEO/SEOHead';
 import Navbar from '@/components/layout/Navbar';
 import { ServiceGrid } from '@/components/ServiceGrid';
 import { BookingModal } from '@/components/BookingModal';
@@ -22,17 +23,76 @@ const Index = () => {
     setIsBookingModalOpen(true);
   };
 
+  const services = [
+    {
+      name: "Home Cleaning",
+      description: "Professional residential cleaning services including deep cleaning, regular maintenance, and move-in/move-out cleaning",
+      price: "$80-200"
+    },
+    {
+      name: "Plumbing Services", 
+      description: "Licensed plumbing repair and installation including leak repairs, pipe installation, and emergency services",
+      price: "$100-500"
+    },
+    {
+      name: "Electrical Work",
+      description: "Certified electrical services including wiring, outlet installation, and electrical repairs",
+      price: "$150-400"
+    },
+    {
+      name: "Landscaping",
+      description: "Complete lawn care and landscaping services including mowing, trimming, and garden design",
+      price: "$75-300"
+    },
+    {
+      name: "Handyman Services",
+      description: "General home repairs and maintenance including furniture assembly, painting, and minor repairs",
+      price: "$60-250"
+    },
+    {
+      name: "HVAC Services",
+      description: "Heating and cooling system maintenance, repair, and installation services",
+      price: "$120-600"
+    }
+  ];
+
+  const breadcrumbs = [
+    { name: "Home", url: "/" }
+  ];
+
+  const reviews = [
+    {
+      rating: 5,
+      author: "Sarah Johnson",
+      text: "Excellent service! The cleaning team was professional and thorough. Highly recommend ServiceMaster Pro.",
+      date: "2024-03-15"
+    },
+    {
+      rating: 5,
+      author: "Mike Chen",
+      text: "Quick response for emergency plumbing. The technician was knowledgeable and fixed the issue fast.",
+      date: "2024-03-10"
+    },
+    {
+      rating: 4,
+      author: "Emily Rodriguez",
+      text: "Great platform for finding reliable service providers. Easy booking process and quality results.",
+      date: "2024-03-08"
+    }
+  ];
+
   return (
     <>
-      <Helmet>
-        <title>ServiceMaster Pro | Trusted Professional Services</title>
-        <meta name="description" content="Connect with verified professionals for cleaning, plumbing, electrical, and more. Book trusted services with ServiceMaster Pro." />
-        <meta name="keywords" content="professional services, home services, cleaning, plumbing, electrical, verified professionals" />
-        <meta property="og:title" content="ServiceMaster Pro - Professional Service Platform" />
-        <meta property="og:description" content="Connect with trusted professionals for all your home service needs. Book verified services with ease." />
-        <meta property="og:image" content="URL_TO_YOUR_FEATURED_IMAGE" />
-        <link rel="canonical" href="/" />
-      </Helmet>
+      <SEOHead
+        title="ServiceMaster Pro | Trusted Professional Services"
+        description="Connect with verified professionals for cleaning, plumbing, electrical, and more. Book trusted services with ServiceMaster Pro - rated 4.8/5 by 10,000+ customers."
+        keywords="professional services, home services, cleaning, plumbing, electrical, verified professionals, home maintenance, service booking"
+        canonical="/"
+        schemaType="LocalBusiness"
+        breadcrumbs={breadcrumbs}
+        services={services}
+        reviews={reviews}
+      />
 
       <div className="min-h-screen bg-background">
         <Navbar />

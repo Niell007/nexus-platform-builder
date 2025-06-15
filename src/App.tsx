@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
@@ -13,6 +14,7 @@ import { GoogleAnalytics } from '@/components/Analytics/GoogleAnalytics';
 const Index = lazy(() => import('@/pages/Index'));
 const About = lazy(() => import('@/pages/About'));
 const Services = lazy(() => import('@/pages/Services'));
+const Contact = lazy(() => import('@/pages/Contact'));
 const UserDashboardPage = lazy(() => import('@/pages/UserDashboardPage'));
 const AuthPage = lazy(() => import('@/components/auth/AuthPage'));
 const Admin = lazy(() => import('@/pages/Admin'));
@@ -45,6 +47,7 @@ function App() {
                       <Route path="/" element={<Index />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/services" element={<Services />} />
+                      <Route path="/contact" element={<Contact />} />
                       <Route path="/auth" element={<AuthPage />} />
                       <Route 
                         path="/dashboard" 

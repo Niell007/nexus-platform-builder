@@ -12,6 +12,11 @@ interface SEOHeadProps {
   author?: string;
   publishedTime?: string;
   modifiedTime?: string;
+  schemaType?: 'LocalBusiness' | 'WebPage' | 'AboutPage' | 'ContactPage' | 'Service' | 'Article' | 'FAQPage';
+  breadcrumbs?: Array<{ name: string; url: string }>;
+  services?: Array<{ name: string; description: string; price?: string }>;
+  faqs?: Array<{ question: string; answer: string }>;
+  reviews?: Array<{ rating: number; author: string; text: string; date: string }>;
 }
 
 const SEOHead: React.FC<SEOHeadProps> = ({
@@ -23,19 +28,33 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   type = "website",
   author = "ServiceMaster Pro",
   publishedTime,
-  modifiedTime
+  modifiedTime,
+  schemaType = "WebPage",
+  breadcrumbs,
+  services,
+  faqs,
+  reviews
 }) => {
-  const siteUrl = window.location.origin;
-  const fullCanonical = canonical ? `${siteUrl}${canonical}` : window.location.href;
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://servicemasterpro.com';
+  const fullCanonical = canonical ? `${siteUrl}${canonical}` : (typeof window !== 'undefined' ? window.location.href : siteUrl);
   const fullImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
 
-  const structuredData = {
+  // Base organization schema
+  const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    "@id": `${siteUrl}/#organization`,
     "name": "ServiceMaster Pro",
-    "description": description,
     "url": siteUrl,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${siteUrl}/icon-512.png`,
+      "width": 512,
+      "height": 512
+    },
+    "description": "Professional home services platform connecting customers with verified service providers",
     "telephone": "(555) 123-4567",
+    "email": "contact@servicemasterpro.com",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "123 Service Street",
@@ -51,44 +70,140 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     },
     "openingHours": "Mo-Su 00:00-23:59",
     "priceRange": "$50-$500",
-    "serviceArea": {
-      "@type": "City",
-      "name": "Your City"
-    },
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Professional Services",
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Home Cleaning",
-            "description": "Professional residential cleaning services"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Plumbing Services",
-            "description": "Licensed plumbing repair and installation"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Landscaping",
-            "description": "Complete lawn care and landscaping services"
-          }
-        }
-      ]
+    "areaServed": {
+      "@type": "State",
+      "name": "Your State"
     },
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "4.8",
-      "reviewCount": "372"
+      "reviewCount": "372",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "sameAs": [
+      "https://facebook.com/servicemasterpro",
+      "https://twitter.com/servicemasterpro",
+      "https://linkedin.com/company/servicemasterpro"
+    ]
+  };
+
+  // Generate page-specific schema
+  const generatePageSchema = () => {
+    const baseSchema = {
+      "@context": "https://schema.org",
+      "@type": schemaType,
+      "@id": fullCanonical,
+      "url": fullCanonical,
+      "name": title,
+      "description": description,
+      "image": fullImage,
+      "publisher": {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organization`
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": fullCanonical
+      }
+    };
+
+    // Add breadcrumbs if provided
+    if (breadcrumbs && breadcrumbs.length > 0) {
+      baseSchema["breadcrumb"] = {
+        "@type": "BreadcrumbList",
+        "itemListElement": breadcrumbs.map((crumb, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "name": crumb.name,
+          "item": `${siteUrl}${crumb.url}`
+        }))
+      };
+    }
+
+    // Add services if provided
+    if (services && services.length > 0) {
+      baseSchema["hasOfferCatalog"] = {
+        "@type": "OfferCatalog",
+        "name": "Professional Services",
+        "itemListElement": services.map((service, index) => ({
+          "@type": "Offer",
+          "position": index + 1,
+          "itemOffered": {
+            "@type": "Service",
+            "name": service.name,
+            "description": service.description,
+            ...(service.price && { "offers": {
+              "@type": "Offer",
+              "price": service.price,
+              "priceCurrency": "USD"
+            }})
+          }
+        }))
+      };
+    }
+
+    // Add FAQs if provided
+    if (faqs && faqs.length > 0) {
+      baseSchema["mainEntity"] = faqs.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }));
+    }
+
+    // Add reviews if provided
+    if (reviews && reviews.length > 0) {
+      baseSchema["review"] = reviews.map(review => ({
+        "@type": "Review",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": review.rating,
+          "bestRating": "5"
+        },
+        "author": {
+          "@type": "Person",
+          "name": review.author
+        },
+        "reviewBody": review.text,
+        "datePublished": review.date
+      }));
+    }
+
+    // Add article-specific properties
+    if (schemaType === "Article") {
+      baseSchema["author"] = {
+        "@type": "Person",
+        "name": author
+      };
+      if (publishedTime) baseSchema["datePublished"] = publishedTime;
+      if (modifiedTime) baseSchema["dateModified"] = modifiedTime;
+    }
+
+    return baseSchema;
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    "url": siteUrl,
+    "name": "ServiceMaster Pro",
+    "description": "Professional home services platform",
+    "publisher": {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${siteUrl}/services?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
     }
   };
 
@@ -134,9 +249,19 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       <meta name="msapplication-TileColor" content="#2563eb" />
       <meta name="format-detection" content="telephone=yes" />
       
-      {/* Structured Data */}
+      {/* Structured Data - Organization */}
       <script type="application/ld+json">
-        {JSON.stringify(structuredData)}
+        {JSON.stringify(organizationSchema)}
+      </script>
+      
+      {/* Structured Data - Website */}
+      <script type="application/ld+json">
+        {JSON.stringify(websiteSchema)}
+      </script>
+      
+      {/* Structured Data - Page Specific */}
+      <script type="application/ld+json">
+        {JSON.stringify(generatePageSchema())}
       </script>
     </Helmet>
   );

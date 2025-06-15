@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEOHead from '@/components/SEO/SEOHead';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookingManagement } from '@/components/BookingManagement';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,6 +38,11 @@ const UserDashboardPage: React.FC = () => {
     }
   ];
 
+  const breadcrumbs = [
+    { name: "Home", url: "/" },
+    { name: "Dashboard", url: "/dashboard" }
+  ];
+
   if (!user) {
     return (
       <div className="min-h-screen bg-background">
@@ -56,11 +61,13 @@ const UserDashboardPage: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>My Dashboard - ServiceMaster Pro</title>
-        <meta name="description" content="Manage your service bookings, view your history, and track your account on your personal dashboard." />
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+      <SEOHead
+        title="My Dashboard - ServiceMaster Pro | Manage Your Bookings"
+        description="Manage your service bookings, view your history, and track your account on your personal dashboard. Access your ServiceMaster Pro account securely."
+        canonical="/dashboard"
+        schemaType="WebPage"
+        breadcrumbs={breadcrumbs}
+      />
       
       <div className="min-h-screen bg-background">
         <Navbar />

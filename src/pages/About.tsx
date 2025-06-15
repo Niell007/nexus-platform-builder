@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEOHead from '@/components/SEO/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -100,17 +100,43 @@ const About = () => {
     }
   ];
 
+  const breadcrumbs = [
+    { name: "Home", url: "/" },
+    { name: "About", url: "/about" }
+  ];
+
+  const faqs = [
+    {
+      question: "When was ServiceMaster Pro founded?",
+      answer: "ServiceMaster Pro was founded in 2020 with a mission to revolutionize the home services industry by connecting customers with verified professionals."
+    },
+    {
+      question: "How many customers does ServiceMaster Pro serve?",
+      answer: "We proudly serve over 10,000 customers across 50+ cities nationwide, with a 4.8-star average rating."
+    },
+    {
+      question: "What makes ServiceMaster Pro different?",
+      answer: "Our commitment to quality through rigorous background checks, 100% satisfaction guarantee, and 24/7 customer support sets us apart."
+    },
+    {
+      question: "How does ServiceMaster Pro verify professionals?",
+      answer: "Every professional undergoes background checks, insurance verification, and skill assessments before joining our platform."
+    }
+  ];
+
   return (
     <>
-      <Helmet>
-        <title>About Us - ServiceMaster Pro | Trusted Professional Services</title>
-        <meta name="description" content="Learn about ServiceMaster Pro's mission to connect you with verified professionals. Our story, values, and commitment to quality service since 2020." />
-        <meta name="keywords" content="about servicemasterpro, company history, professional services, trusted platform, verified professionals" />
-        <meta property="og:title" content="About ServiceMaster Pro - Professional Service Platform" />
-        <meta property="og:description" content="Learn about our mission to connect you with trusted professionals and our commitment to quality service." />
-        <meta property="og:image" content="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=630&fit=crop&auto=format&q=80" />
-        <link rel="canonical" href="/about" />
-      </Helmet>
+      <SEOHead
+        title="About Us - ServiceMaster Pro | Trusted Professional Services Since 2020"
+        description="Learn about ServiceMaster Pro's mission to connect you with verified professionals. Our story, values, and commitment to quality service since 2020. Serving 10,000+ customers nationwide."
+        keywords="about servicemasterpro, company history, professional services, trusted platform, verified professionals, home services company"
+        canonical="/about"
+        schemaType="AboutPage"
+        breadcrumbs={breadcrumbs}
+        faqs={faqs}
+        publishedTime="2020-01-01T00:00:00Z"
+        modifiedTime="2024-03-15T10:00:00Z"
+      />
 
       <div className="min-h-screen bg-background">
         <Navbar />
