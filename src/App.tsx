@@ -19,6 +19,8 @@ const About = lazy(() => import('@/pages/About'));
 const Services = lazy(() => import('@/pages/Services'));
 const Contact = lazy(() => import('@/pages/Contact'));
 const UserDashboardPage = lazy(() => import('@/pages/UserDashboardPage'));
+const UserProfile = lazy(() => import('@/pages/UserProfile'));
+const Settings = lazy(() => import('@/pages/Settings'));
 const AuthPage = lazy(() => import('@/components/auth/AuthPage'));
 const Admin = lazy(() => import('@/pages/Admin'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
@@ -60,6 +62,8 @@ function App() {
                           </DashboardErrorBoundary>
                         } 
                       />
+                      <Route path="/profile" element={<UserProfile />} />
+                      <Route path="/settings" element={<Settings />} />
                       <Route path="/admin" element={<Admin />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>

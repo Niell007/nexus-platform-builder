@@ -39,6 +39,10 @@ const Navbar = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,7 +108,7 @@ const Navbar = () => {
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/dashboard">
                     <Calendar className="h-4 w-4 mr-2" />
-                    Book Service
+                    Dashboard
                   </Link>
                 </Button>
 
@@ -138,13 +142,17 @@ const Navbar = () => {
                         <span>Dashboard</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
+                    <DropdownMenuItem asChild>
+                      <Link to="/settings">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Settings</span>
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/admin">
@@ -153,7 +161,7 @@ const Navbar = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={signOut}>
+                    <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Log out</span>
                     </DropdownMenuItem>
@@ -220,6 +228,33 @@ const Navbar = () => {
                   </Link>
                 ))}
               </div>
+
+              {/* Mobile User Actions */}
+              {user && (
+                <div className="border-t pt-4 space-y-2">
+                  <Link
+                    to="/dashboard"
+                    className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/profile"
+                    className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    to="/settings"
+                    className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Settings
+                  </Link>
+                </div>
+              )}
 
               {/* Mobile Contact */}
               <div className="border-t pt-4 space-y-2">

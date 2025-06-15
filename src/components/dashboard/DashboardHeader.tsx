@@ -25,6 +25,10 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onBookService,
   onSignOut
 }) => {
+  const handleSignOut = async () => {
+    await onSignOut();
+  };
+
   return (
     <header 
       className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
@@ -73,26 +77,28 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               </Button>
             </Link>
             
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              aria-label="Open settings"
-              data-testid="settings-button"
-            >
-              <Settings className="w-4 h-4 mr-2" aria-hidden="true" />
-              <span className="hidden sm:inline">Settings</span>
-            </Button>
+            <Link to="/settings">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                aria-label="Open settings"
+                data-testid="settings-button"
+              >
+                <Settings className="w-4 h-4 mr-2" aria-hidden="true" />
+                <span className="hidden sm:inline">Settings</span>
+              </Button>
+            </Link>
             
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={onSignOut}
+              onClick={handleSignOut}
               className="focus:ring-2 focus:ring-primary focus:ring-offset-2"
               aria-label="Sign out of your account"
               data-testid="signout-button"
             >
-              <LogOut className="w-4 h-4 mr-2" aria-hidden="true" />
+              <LogOut className="w-4 w-4 mr-2" aria-hidden="true" />
               <span className="hidden sm:inline">Sign Out</span>
             </Button>
           </div>
