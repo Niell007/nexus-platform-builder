@@ -15,9 +15,6 @@ interface TrendChartProps {
  * Displays time-series data with proper ARIA labels and keyboard navigation
  */
 export const TrendChart: React.FC<TrendChartProps> = ({ chart }) => {
-  const ChartComponent = chart.type === 'bar' ? BarChart : LineChart;
-  const DataComponent = chart.type === 'bar' ? Bar : Line;
-
   // Create accessible data summary for screen readers
   const dataSummary = `Chart showing ${chart.title.toLowerCase()}. 
     Values range from ${Math.min(...chart.data.map(d => d.value))} to ${Math.max(...chart.data.map(d => d.value))} 
@@ -65,52 +62,85 @@ export const TrendChart: React.FC<TrendChartProps> = ({ chart }) => {
         {/* Chart Container */}
         <div className="h-64 w-full" role="presentation">
           <ResponsiveContainer width="100%" height="100%">
-            <ChartComponent 
-              data={chart.data}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-              <XAxis 
-                dataKey="date" 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: 'currentColor' }}
-              />
-              <YAxis 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: 'currentColor' }}
-                label={{ 
-                  value: chart.yAxisLabel, 
-                  angle: -90, 
-                  position: 'insideLeft',
-                  style: { textAnchor: 'middle' }
-                }}
-              />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--background))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '6px',
-                  color: 'hsl(var(--foreground))'
-                }}
-                labelStyle={{ color: 'hsl(var(--foreground))' }}
-              />
-              <DataComponent
-                {...(chart.type === 'bar' 
-                  ? { dataKey: 'value', fill: chart.color }
-                  : { 
-                      type: 'monotone', 
-                      dataKey: 'value', 
-                      stroke: chart.color, 
-                      strokeWidth: 2,
-                      dot: { fill: chart.color, strokeWidth: 2 }
-                    }
-                )}
-              />
-            </ChartComponent>
+            {chart.type === 'bar' ? (
+              <BarChart 
+                data={chart.data}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                <XAxis 
+                  dataKey="date" 
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: 'currentColor' }}
+                />
+                <YAxis 
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: 'currentColor' }}
+                  label={{ 
+                    value: chart.yAxisLabel, 
+                    angle: -90, 
+                    position: 'insideLeft',
+                    style: { textAnchor: 'middle' }
+                  }}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px',
+                    color: 'hsl(var(--foreground))'
+                  }}
+                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                />
+                <Bar dataKey="value" fill={chart.color} />
+              </BarChart>
+            ) : (
+              <LineChart 
+                data={chart.data}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                <XAxis 
+                  dataKey="date" 
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: 'currentColor' }}
+                />
+                <YAxis 
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: 'currentColor' }}
+                  label={{ 
+                    value: chart.yAxisLabel, 
+                    angle: -90, 
+                    position: 'insideLeft',
+                    style: { textAnchor: 'middle' }
+                  }}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px',
+                    color: 'hsl(var(--foreground))'
+                  }}
+                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke={chart.color}
+                  strokeWidth={2}
+                  dot={{ fill: chart.color, strokeWidth: 2 }}
+                />
+              </LineChart>
+            )}
           </ResponsiveContainer>
         </div>
 
