@@ -14,22 +14,23 @@ interface LocaleSettings {
 export const useLocalization = () => {
   const [locale, setLocale] = useState<LocaleSettings>({
     language: 'en',
-    region: 'US',
-    timezone: 'America/New_York',
-    currency: 'USD',
-    units: 'imperial',
-    dateFormat: 'MM/DD/YYYY',
-    decimalSeparator: '.'
+    region: 'ZA',
+    timezone: 'Africa/Johannesburg',
+    currency: 'ZAR',
+    units: 'metric',
+    dateFormat: 'DD/MM/YYYY',
+    decimalSeparator: ','
   });
 
   useEffect(() => {
     // Detect user's locale settings
-    const userLanguage = navigator.language || 'en-US';
+    const userLanguage = navigator.language || 'en-ZA';
     const [language, region] = userLanguage.split('-');
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    // Regional settings based on locale
+    // Regional settings based on locale with South Africa as priority
     const regionalSettings: Record<string, Partial<LocaleSettings>> = {
+      'ZA': { currency: 'ZAR', units: 'metric', dateFormat: 'DD/MM/YYYY', decimalSeparator: ',' },
       'US': { currency: 'USD', units: 'imperial', dateFormat: 'MM/DD/YYYY', decimalSeparator: '.' },
       'GB': { currency: 'GBP', units: 'metric', dateFormat: 'DD/MM/YYYY', decimalSeparator: '.' },
       'DE': { currency: 'EUR', units: 'metric', dateFormat: 'DD.MM.YYYY', decimalSeparator: ',' },
@@ -37,17 +38,18 @@ export const useLocalization = () => {
       'CA': { currency: 'CAD', units: 'metric', dateFormat: 'DD/MM/YYYY', decimalSeparator: '.' },
     };
 
-    const settings = regionalSettings[region || 'US'] || regionalSettings['US'];
+    // Default to South Africa if region not found
+    const settings = regionalSettings[region || 'ZA'] || regionalSettings['ZA'];
 
     setLocale(prev => ({
       ...prev,
       language: language || 'en',
-      region: region || 'US',
-      timezone,
-      currency: settings.currency || prev.currency,
-      units: settings.units || prev.units,
-      dateFormat: settings.dateFormat || prev.dateFormat,
-      decimalSeparator: settings.decimalSeparator || prev.decimalSeparator
+      region: region || 'ZA',
+      timezone: timezone || 'Africa/Johannesburg',
+      currency: settings.currency || 'ZAR',
+      units: settings.units || 'metric',
+      dateFormat: settings.dateFormat || 'DD/MM/YYYY',
+      decimalSeparator: settings.decimalSeparator || ','
     }));
   }, []);
 
@@ -64,5 +66,25 @@ export const useLocalization = () => {
     }).format(date);
   };
 
-  return { locale, setLocale, formatCurrency, formatDate };
+  const convertToZAR = (dollarAmount: string): string => {
+    // Extract numbers from price range like "$80-200" or "$100"
+    const numbers = dollarAmount.match(/\d+/g);
+    if (!numbers) return dollarAmount;
+
+    // USD to ZAR conversion rate (approximate)
+    const conversionRate = 18.5;
+    
+    if (numbers.length === 1) {
+      const zarAmount = Math.round(parseInt(numbers[0]) * conversionRate);
+      return `R${zarAmount.toLocaleString()}`;
+    } else if (numbers.length === 2) {
+      const zarMin = Math.round(parseInt(numbers[0]) * conversionRate);
+      const zarMax = Math.round(parseInt(numbers[1]) * conversionRate);
+      return `R${zarMin.toLocaleString()}-R${zarMax.toLocaleString()}`;
+    }
+    
+    return dollarAmount;
+  };
+
+  return { locale, setLocale, formatCurrency, formatDate, convertToZAR };
 };

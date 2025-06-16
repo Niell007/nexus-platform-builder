@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import SEOHead from '@/components/SEO/SEOHead';
 import Navbar from '@/components/layout/Navbar';
@@ -11,12 +10,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OptimizedImage from '@/components/Media/OptimizedImage';
+import { useLocalization } from '@/hooks/useLocalization';
 import { Star, MapPin, Clock, Shield, Award, Users } from 'lucide-react';
 
 const Services: React.FC = () => {
   const [selectedService, setSelectedService] = useState<string>('');
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
+  const { convertToZAR } = useLocalization();
 
   const handleBookService = (serviceName: string) => {
     setSelectedService(serviceName);
@@ -32,7 +33,7 @@ const Services: React.FC = () => {
     {
       name: "Home Cleaning",
       description: "Professional residential cleaning services including deep cleaning, regular maintenance, and move-in/move-out cleaning",
-      price: "$80-200",
+      price: "R1,480-R3,700",
       category: "Cleaning",
       duration: "2-4 hours",
       rating: 4.9,
@@ -43,7 +44,7 @@ const Services: React.FC = () => {
     {
       name: "Plumbing Services", 
       description: "Licensed plumbing repair and installation including leak repairs, pipe installation, and emergency services",
-      price: "$100-500",
+      price: "R1,850-R9,250",
       category: "Maintenance",
       duration: "1-3 hours",
       rating: 4.8,
@@ -54,7 +55,7 @@ const Services: React.FC = () => {
     {
       name: "Electrical Work",
       description: "Certified electrical services including wiring, outlet installation, and electrical repairs",
-      price: "$150-400",
+      price: "R2,775-R7,400",
       category: "Maintenance",
       duration: "1-4 hours",
       rating: 4.9,
@@ -65,7 +66,7 @@ const Services: React.FC = () => {
     {
       name: "Landscaping",
       description: "Complete lawn care and landscaping services including mowing, trimming, and garden design",
-      price: "$75-300",
+      price: "R1,390-R5,550",
       category: "Outdoor",
       duration: "2-6 hours",
       rating: 4.7,
@@ -76,7 +77,7 @@ const Services: React.FC = () => {
     {
       name: "Handyman Services",
       description: "General home repairs and maintenance including furniture assembly, painting, and minor repairs",
-      price: "$60-250",
+      price: "R1,110-R4,625",
       category: "Maintenance",
       duration: "1-4 hours",
       rating: 4.8,
@@ -87,7 +88,7 @@ const Services: React.FC = () => {
     {
       name: "HVAC Services",
       description: "Heating and cooling system maintenance, repair, and installation services",
-      price: "$120-600",
+      price: "R2,220-R11,100",
       category: "Maintenance",
       duration: "2-6 hours",
       rating: 4.9,
@@ -98,7 +99,7 @@ const Services: React.FC = () => {
     {
       name: "Pest Control",
       description: "Professional pest control and extermination services for residential and commercial properties",
-      price: "$90-350",
+      price: "R1,665-R6,475",
       category: "Maintenance",
       duration: "1-3 hours",
       rating: 4.6,
@@ -109,7 +110,7 @@ const Services: React.FC = () => {
     {
       name: "Appliance Repair",
       description: "Expert repair services for washers, dryers, refrigerators, and other home appliances",
-      price: "$100-400",
+      price: "R1,850-R7,400",
       category: "Maintenance",
       duration: "1-3 hours",
       rating: 4.7,
@@ -162,7 +163,7 @@ const Services: React.FC = () => {
     },
     {
       question: "Do you provide services in my area?",
-      answer: "We currently serve 50+ cities nationwide. Enter your zip code during booking to check availability in your area."
+      answer: "We currently serve major cities across South Africa. Enter your area during booking to check availability."
     }
   ];
 
@@ -234,8 +235,8 @@ const Services: React.FC = () => {
     <>
       <SEOHead
         title="Professional Services - ServiceMaster Pro | Home Services Directory"
-        description="Browse our comprehensive range of professional services including cleaning, plumbing, electrical work, landscaping, and more. Book verified professionals with competitive pricing."
-        keywords="professional services, home services, cleaning services, plumbing, electrical, landscaping, handyman, HVAC, pest control, appliance repair"
+        description="Browse our comprehensive range of professional services including cleaning, plumbing, electrical work, landscaping, and more. Book verified professionals with competitive pricing in South Africa."
+        keywords="professional services, home services, cleaning services, plumbing, electrical, landscaping, handyman, HVAC, pest control, appliance repair, South Africa"
         canonical="/services"
         schemaType="Service"
         breadcrumbs={breadcrumbs}
@@ -260,7 +261,7 @@ const Services: React.FC = () => {
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
                 Connect with verified professionals for all your home and business needs. 
-                Quality service, trusted providers, competitive pricing.
+                Quality service, trusted providers, competitive pricing across South Africa.
               </p>
               
               {/* Enhanced Stats */}
@@ -278,8 +279,8 @@ const Services: React.FC = () => {
                   <div className="text-sm text-muted-foreground">Average Rating</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">50+</div>
-                  <div className="text-sm text-muted-foreground">Cities</div>
+                  <div className="text-2xl font-bold text-primary">9</div>
+                  <div className="text-sm text-muted-foreground">Provinces</div>
                 </div>
               </div>
               

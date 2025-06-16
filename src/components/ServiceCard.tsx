@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Service } from '@/hooks/useServices';
+import { useLocalization } from '@/hooks/useLocalization';
 import { Star, MapPin, Clock } from 'lucide-react';
 
 interface ServiceCardProps {
@@ -14,6 +15,8 @@ interface ServiceCardProps {
 }
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({ service, onBookNow }) => {
+  const { convertToZAR } = useLocalization();
+
   return (
     <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {service.image_url && (
@@ -48,7 +51,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, onBookNow }) 
           {service.price_range && (
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl font-bold text-primary">
-                {service.price_range}
+                {convertToZAR(service.price_range)}
               </span>
               <span className="text-sm text-muted-foreground">per service</span>
             </div>

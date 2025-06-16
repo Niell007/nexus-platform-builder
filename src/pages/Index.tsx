@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import SEOHead from '@/components/SEO/SEOHead';
 import Navbar from '@/components/layout/Navbar';
@@ -38,7 +37,7 @@ const Index = () => {
     {
       name: "Home Cleaning",
       description: "Professional residential cleaning services including deep cleaning, regular maintenance, and move-in/move-out cleaning",
-      price: "$80-200",
+      price: "R1,480-R3,700",
       image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop",
       rating: 4.9,
       bookings: 1250
@@ -46,7 +45,7 @@ const Index = () => {
     {
       name: "Plumbing Services", 
       description: "Licensed plumbing repair and installation including leak repairs, pipe installation, and emergency services",
-      price: "$100-500",
+      price: "R1,850-R9,250",
       image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop",
       rating: 4.8,
       bookings: 890
@@ -54,7 +53,7 @@ const Index = () => {
     {
       name: "Electrical Work",
       description: "Certified electrical services including wiring, outlet installation, and electrical repairs",
-      price: "$150-400",
+      price: "R2,775-R7,400",
       image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=300&fit=crop",
       rating: 4.9,
       bookings: 670
@@ -62,7 +61,7 @@ const Index = () => {
     {
       name: "Landscaping",
       description: "Complete lawn care and landscaping services including mowing, trimming, and garden design",
-      price: "$75-300",
+      price: "R1,390-R5,550",
       image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop",
       rating: 4.7,
       bookings: 540
@@ -70,7 +69,7 @@ const Index = () => {
     {
       name: "Handyman Services",
       description: "General home repairs and maintenance including furniture assembly, painting, and minor repairs",
-      price: "$60-250",
+      price: "R1,110-R4,625",
       image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&h=300&fit=crop",
       rating: 4.8,
       bookings: 920
@@ -78,7 +77,7 @@ const Index = () => {
     {
       name: "HVAC Services",
       description: "Heating and cooling system maintenance, repair, and installation services",
-      price: "$120-600",
+      price: "R2,220-R11,100",
       image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
       rating: 4.9,
       bookings: 450
@@ -107,7 +106,7 @@ const Index = () => {
     {
       icon: Globe,
       title: "Nationwide Coverage",
-      description: "Professional services available in 50+ cities across the country",
+      description: "Professional services available across all 9 provinces in South Africa",
       color: "text-purple-500"
     }
   ];
@@ -126,36 +125,36 @@ const Index = () => {
   const reviews = [
     {
       rating: 5,
-      author: "Sarah Johnson",
+      author: "Sarah Mthombeni",
       text: "Excellent service! The cleaning team was professional and thorough. Highly recommend ServiceMaster Pro.",
       date: "2024-03-15",
       service: "Home Cleaning",
-      location: "New York, NY"
+      location: "Johannesburg, GP"
     },
     {
       rating: 5,
-      author: "Mike Chen",
+      author: "Mike van der Merwe",
       text: "Quick response for emergency plumbing. The technician was knowledgeable and fixed the issue fast.",
       date: "2024-03-10",
       service: "Plumbing Services",
-      location: "Los Angeles, CA"
+      location: "Cape Town, WC"
     },
     {
       rating: 4,
-      author: "Emily Rodriguez",
+      author: "Thandiwe Dlamini",
       text: "Great platform for finding reliable service providers. Easy booking process and quality results.",
       date: "2024-03-08",
       service: "Electrical Work",
-      location: "Chicago, IL"
+      location: "Durban, KZN"
     }
   ];
 
   return (
     <>
       <SEOHead
-        title="ServiceMaster Pro | Trusted Professional Services"
-        description="Connect with verified professionals for cleaning, plumbing, electrical, and more. Book trusted services with ServiceMaster Pro - rated 4.8/5 by 10,000+ customers."
-        keywords="professional services, home services, cleaning, plumbing, electrical, verified professionals, home maintenance, service booking"
+        title="ServiceMaster Pro | Trusted Professional Services in South Africa"
+        description="Connect with verified professionals for cleaning, plumbing, electrical, and more across South Africa. Book trusted services with ServiceMaster Pro - rated 4.8/5 by 10,000+ customers."
+        keywords="professional services, home services, cleaning, plumbing, electrical, verified professionals, home maintenance, service booking, South Africa"
         canonical="/"
         schemaType="LocalBusiness"
         breadcrumbs={breadcrumbs}
@@ -185,7 +184,7 @@ const Index = () => {
               <div className="animate-fade-in">
                 <Badge variant="secondary" className="mb-4 bg-white/10 text-white border-white/20">
                   <Award className="w-4 h-4 mr-1" />
-                  Rated #1 Service Platform
+                  Rated #1 Service Platform in SA
                 </Badge>
                 
                 <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 text-white">
@@ -197,7 +196,7 @@ const Index = () => {
                 </h1>
                 
                 <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Connecting you with verified professionals for all your home service needs. 
+                  Connecting you with verified professionals for all your home service needs across South Africa. 
                   Quality service, trusted providers, competitive pricing.
                 </p>
 
@@ -255,7 +254,7 @@ const Index = () => {
                 Why Choose ServiceMaster Pro?
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Experience the difference with our premium service platform designed for modern homeowners.
+                Experience the difference with our premium service platform designed for South African homeowners.
               </p>
             </div>
 
@@ -285,7 +284,7 @@ const Index = () => {
                 Popular Services
               </h2>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Discover our most requested professional services with verified providers.
+                Discover our most requested professional services with verified providers across South Africa.
               </p>
             </div>
 
@@ -380,7 +379,7 @@ const Index = () => {
                   <CardTitle>Call Us</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-lg font-semibold">(555) 123-4567</p>
+                  <p className="text-lg font-semibold">011 123 4567</p>
                   <p className="text-muted-foreground">24/7 Support Available</p>
                 </CardContent>
               </Card>
@@ -391,7 +390,7 @@ const Index = () => {
                   <CardTitle>Email Us</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-lg font-semibold">support@servicemasterpro.com</p>
+                  <p className="text-lg font-semibold">support@servicemasterpro.co.za</p>
                   <p className="text-muted-foreground">Response within 2 hours</p>
                 </CardContent>
               </Card>
@@ -403,7 +402,7 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-lg font-semibold">123 Service Street</p>
-                  <p className="text-muted-foreground">Your City, State 12345</p>
+                  <p className="text-muted-foreground">Sandton, Johannesburg 2196</p>
                 </CardContent>
               </Card>
             </div>
@@ -422,7 +421,7 @@ const Index = () => {
               Ready to Experience the Difference?
             </h2>
             <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-              Join thousands of satisfied customers who trust ServiceMaster Pro for their service needs.
+              Join thousands of satisfied customers who trust ServiceMaster Pro for their service needs across South Africa.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
