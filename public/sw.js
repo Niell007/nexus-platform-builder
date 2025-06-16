@@ -4,24 +4,46 @@ const urlsToCache = [
   '/',
   '/about',
   '/services',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json'
+  '/contact',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 // Install event
 self.addEventListener('install', (event) => {
+  console.log('Service Worker installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        // Add URLs one by one to handle failures gracefully
+        return Promise.allSettled(
+          urlsToCache.map(url => 
+            cache.add(url).catch(err => {
+              console.warn(`Failed to cache ${url}:`, err);
+              return null;
+            })
+          )
+        );
+      })
+      .then(() => {
+        console.log('Service Worker installed successfully');
+        self.skipWaiting();
+      })
+      .catch(error => {
+        console.error('Service Worker installation failed:', error);
       })
   );
 });
 
 // Fetch event
 self.addEventListener('fetch', (event) => {
+  // Only cache GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -29,14 +51,20 @@ self.addEventListener('fetch', (event) => {
         if (response) {
           return response;
         }
-        return fetch(event.request);
-      }
-    )
+        
+        return fetch(event.request).catch(() => {
+          // Return a fallback for navigation requests when offline
+          if (event.request.destination === 'document') {
+            return caches.match('/');
+          }
+        });
+      })
   );
 });
 
 // Activate event
 self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -47,6 +75,9 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
+    }).then(() => {
+      console.log('Service Worker activated');
+      return self.clients.claim();
     })
   );
 });
