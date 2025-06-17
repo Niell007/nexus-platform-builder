@@ -1,248 +1,389 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar, Clock, User, Mail, Phone, MapPin, Wrench } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { CalendarIcon, MapPin, Phone, Mail, User, Clock, Star } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+
+const bookingSchema = z.object({
+  serviceType: z.string().min(1, "Please select a service"),
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().min(10, "Please enter a valid phone number"),
+  address: z.string().min(5, "Please enter your full address"),
+  city: z.string().min(2, "Please enter your city"),
+  postalCode: z.string().min(4, "Please enter your postal code"),
+  preferredDate: z.date({
+    required_error: "Please select a preferred date",
+  }),
+  preferredTime: z.string().min(1, "Please select a preferred time"),
+  description: z.string().optional(),
+  urgency: z.enum(["low", "medium", "high"]).default("medium"),
+});
+
+type BookingFormData = z.infer<typeof bookingSchema>;
 
 interface EnhancedBookingFormProps {
   preselectedService?: string;
+  onSuccess?: () => void;
 }
 
-export const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({ 
-  preselectedService 
+export const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({
+  preselectedService,
+  onSuccess
 }) => {
   const { toast } = useToast();
-  
-  const [formData, setFormData] = useState({
-    service: preselectedService || '',
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    date: '',
-    time: '',
-    description: ''
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<BookingFormData>({
+    resolver: zodResolver(bookingSchema),
+    defaultValues: {
+      serviceType: preselectedService || "",
+      fullName: "",
+      email: "",
+      phone: "",
+      address: "",
+      city: "",
+      postalCode: "",
+      description: "",
+      urgency: "medium",
+    },
   });
 
-  useEffect(() => {
-    if (preselectedService) {
-      setFormData(prev => ({ ...prev, service: preselectedService }));
-    }
-  }, [preselectedService]);
+  const services = [
+    "Home Cleaning",
+    "Plumbing Services",
+    "Electrical Work",
+    "Landscaping",
+    "Handyman Services",
+    "HVAC Services",
+    "Pest Control",
+    "Appliance Repair",
+  ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const timeSlots = [
+    "08:00 - 10:00",
+    "10:00 - 12:00",
+    "12:00 - 14:00",
+    "14:00 - 16:00",
+    "16:00 - 18:00",
+    "18:00 - 20:00",
+  ];
 
-  const handleSelectChange = (name: string) => (value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: BookingFormData) => {
+    setIsSubmitting(true);
     
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       toast({
-        title: "Booking Request Submitted",
-        description: "We'll contact you within 24 hours to confirm your service booking.",
+        title: "Booking Submitted Successfully!",
+        description: "We'll contact you within 24 hours to confirm your appointment.",
       });
       
-      // Reset form
-      setFormData({
-        service: '',
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
-        date: '',
-        time: '',
-        description: ''
-      });
+      form.reset();
+      onSuccess?.();
+      
     } catch (error) {
       toast({
         title: "Booking Failed",
         description: "There was an error submitting your booking. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const services = [
-    'Home Cleaning',
-    'Plumbing Services',
-    'Electrical Work',
-    'Landscaping',
-    'Handyman Services',
-    'HVAC Services',
-    'Interior Design',
-    'Pest Control'
-  ];
-
-  const timeSlots = [
-    '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM',
-    '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM',
-    '4:00 PM', '5:00 PM', '6:00 PM'
-  ];
-
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Wrench className="h-6 w-6 text-primary" />
-          Book Your Service
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
+          <Star className="h-6 w-6 text-primary" />
+          Book Professional Service
         </CardTitle>
+        <p className="text-muted-foreground">
+          Fill out the form below and we'll connect you with a verified professional
+        </p>
       </CardHeader>
+      
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Service Selection */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium flex items-center gap-2">
-              <Wrench className="h-4 w-4" />
-              Service Type
-            </label>
-            <Select value={formData.service} onValueChange={handleSelectChange('service')}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a service" />
-              </SelectTrigger>
-              <SelectContent>
-                {services.map(service => (
-                  <SelectItem key={service} value={service}>
-                    {service}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Service Selection */}
+            <FormField
+              control={form.control}
+              name="serviceType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <Star className="h-4 w-4" />
+                    Service Type *
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a service" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {services.map((service) => (
+                        <SelectItem key={service} value={service}>
+                          {service}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Personal Information */}
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Full Name
-              </label>
-              <Input
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                placeholder="Enter your full name"
-                required
+            {/* Personal Information */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Full Name *
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your full name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Email
-              </label>
-              <Input
-                type="email"
+
+              <FormField
+                control={form.control}
                 name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email"
-                required
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      Email Address *
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="Enter your email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium flex items-center gap-2">
-              <Phone className="h-4 w-4" />
-              Phone Number
-            </label>
-            <Input
-              type="tel"
+            <FormField
+              control={form.control}
               name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              placeholder="Enter your phone number"
-              required
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    Phone Number *
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your phone number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Service Address */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              Service Address
-            </label>
-            <Input
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              placeholder="Enter your full address"
-              required
-            />
-          </div>
+            {/* Address Information */}
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      Street Address *
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your street address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* Scheduling */}
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Preferred Date
-              </label>
-              <Input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleInputChange}
-                min={tomorrow.toISOString().split('T')[0]}
-                required
+              <div className="grid md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your city" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="postalCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Postal Code *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter postal code" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Scheduling */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="preferredDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="flex items-center gap-2">
+                      <CalendarIcon className="h-4 w-4" />
+                      Preferred Date *
+                    </FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date < new Date() || date < new Date("1900-01-01")
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="preferredTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      Preferred Time *
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select time slot" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {timeSlots.map((slot) => (
+                          <SelectItem key={slot} value={slot}>
+                            {slot}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                Preferred Time
-              </label>
-              <Select value={formData.time} onValueChange={handleSelectChange('time')}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select time" />
-                </SelectTrigger>
-                <SelectContent>
-                  {timeSlots.map(time => (
-                    <SelectItem key={time} value={time}>
-                      {time}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          {/* Additional Details */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">
-              Additional Details (Optional)
-            </label>
-            <Textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Please describe your specific needs, any special requirements, or additional information..."
-              rows={4}
+            {/* Additional Details */}
+            <FormField
+              control={form.control}
+              name="urgency"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Urgency Level</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select urgency" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="low">Low - Flexible timing</SelectItem>
+                      <SelectItem value="medium">Medium - Within a week</SelectItem>
+                      <SelectItem value="high">High - ASAP</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Submit Button */}
-          <Button type="submit" className="w-full" size="lg">
-            Submit Booking Request
-          </Button>
-        </form>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Additional Details (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe your service needs, special requirements, or any other relevant information..."
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button 
+              type="submit" 
+              className="w-full h-12 text-lg font-semibold"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit Booking Request"}
+            </Button>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );
