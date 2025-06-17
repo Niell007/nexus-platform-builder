@@ -8,7 +8,7 @@ interface KPI {
   value: string;
   description: string;
   icon: string;
-  trend?: 'up' | 'down' | 'stable';
+  trend?: { value: number; isPositive: boolean };
   color?: string;
 }
 
@@ -16,6 +16,7 @@ interface BookingTrend {
   date: string;
   bookings: number;
   revenue: number;
+  label?: string;
 }
 
 interface RecentBooking {
@@ -31,6 +32,7 @@ interface DashboardData {
   kpis: KPI[];
   bookingTrends: BookingTrend[];
   recentBookings: RecentBooking[];
+  lastUpdated: string;
 }
 
 type ConnectionStatus = 'connected' | 'disconnected' | 'reconnecting';
@@ -51,7 +53,7 @@ export const useRealtimeDashboard = () => {
         value: '156',
         description: '+12% from last month',
         icon: 'calendar',
-        trend: 'up',
+        trend: { value: 12, isPositive: true },
         color: 'blue'
       },
       {
@@ -60,7 +62,7 @@ export const useRealtimeDashboard = () => {
         value: '24',
         description: '8 in progress',
         icon: 'activity',
-        trend: 'stable',
+        trend: { value: 0, isPositive: true },
         color: 'green'
       },
       {
@@ -69,7 +71,7 @@ export const useRealtimeDashboard = () => {
         value: '132',
         description: '94% success rate',
         icon: 'check-circle',
-        trend: 'up',
+        trend: { value: 8, isPositive: true },
         color: 'purple'
       },
       {
@@ -78,18 +80,18 @@ export const useRealtimeDashboard = () => {
         value: 'R45,230',
         description: '+8% from last month',
         icon: 'trending-up',
-        trend: 'up',
+        trend: { value: 8, isPositive: true },
         color: 'orange'
       }
     ],
     bookingTrends: [
-      { date: '2024-03-01', bookings: 12, revenue: 2400 },
-      { date: '2024-03-02', bookings: 15, revenue: 3200 },
-      { date: '2024-03-03', bookings: 8, revenue: 1800 },
-      { date: '2024-03-04', bookings: 22, revenue: 4100 },
-      { date: '2024-03-05', bookings: 18, revenue: 3600 },
-      { date: '2024-03-06', bookings: 25, revenue: 5200 },
-      { date: '2024-03-07', bookings: 20, revenue: 4800 }
+      { date: '2024-03-01', bookings: 12, revenue: 2400, label: 'Mar 1' },
+      { date: '2024-03-02', bookings: 15, revenue: 3200, label: 'Mar 2' },
+      { date: '2024-03-03', bookings: 8, revenue: 1800, label: 'Mar 3' },
+      { date: '2024-03-04', bookings: 22, revenue: 4100, label: 'Mar 4' },
+      { date: '2024-03-05', bookings: 18, revenue: 3600, label: 'Mar 5' },
+      { date: '2024-03-06', bookings: 25, revenue: 5200, label: 'Mar 6' },
+      { date: '2024-03-07', bookings: 20, revenue: 4800, label: 'Mar 7' }
     ],
     recentBookings: [
       {
@@ -124,7 +126,8 @@ export const useRealtimeDashboard = () => {
         status: 'completed',
         amount: 'R2,800'
       }
-    ]
+    ],
+    lastUpdated: new Date().toISOString()
   });
 
   const fetchDashboardData = useCallback(async () => {
@@ -155,7 +158,7 @@ export const useRealtimeDashboard = () => {
                 value: serviceRequests.length.toString(),
                 description: 'Service requests',
                 icon: 'calendar',
-                trend: 'up',
+                trend: { value: 12, isPositive: true },
                 color: 'blue'
               },
               // Add more KPIs based on real data
@@ -169,7 +172,8 @@ export const useRealtimeDashboard = () => {
               date: new Date(req.created_at).toISOString().split('T')[0],
               status: req.status as any || 'pending',
               amount: 'R2,500'
-            }))
+            })),
+            lastUpdated: new Date().toISOString()
           };
           setData(transformedData);
         } else {
