@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import SEOHead from '@/components/SEO/SEOHead';
 import Navbar from '@/components/layout/Navbar';
 import { ServiceGrid } from '@/components/ServiceGrid';
-import { BookingModal } from '@/components/BookingModal';
-import { SearchWidget } from '@/components/SearchWidget';
+import { BookingFormModal } from '@/components/booking/BookingFormModal';
+import { ServiceSearch } from '@/components/services/ServiceSearch';
 import { FilterSearch } from '@/components/ui/filter-search';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,22 +11,20 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OptimizedImage from '@/components/Media/OptimizedImage';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useBookingModal } from '@/hooks/useBookingModal';
 import { Star, MapPin, Clock, Shield, Award, Users } from 'lucide-react';
 
 const Services: React.FC = () => {
-  const [selectedService, setSelectedService] = useState<string>('');
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [filteredServices, setFilteredServices] = useState<any[]>([]);
   const { convertToZAR } = useLocalization();
+  const { isOpen, selectedService, openModal, closeModal } = useBookingModal();
 
   const handleBookService = (serviceName: string) => {
-    setSelectedService(serviceName);
-    setIsBookingModalOpen(true);
+    openModal(serviceName);
   };
 
   const handleSearchSelect = (serviceName: string) => {
-    setSelectedService(serviceName);
-    setIsBookingModalOpen(true);
+    openModal(serviceName);
   };
 
   const allServices = [
@@ -286,7 +284,7 @@ const Services: React.FC = () => {
               
               {/* Search Widget */}
               <div className="max-w-md mx-auto mb-8">
-                <SearchWidget onServiceSelect={handleSearchSelect} />
+                <ServiceSearch onServiceSelect={handleSearchSelect} />
               </div>
             </div>
           </div>
@@ -391,9 +389,9 @@ const Services: React.FC = () => {
         </main>
 
         {/* Booking Modal */}
-        <BookingModal
-          isOpen={isBookingModalOpen}
-          onClose={() => setIsBookingModalOpen(false)}
+        <BookingFormModal
+          isOpen={isOpen}
+          onClose={closeModal}
           preselectedService={selectedService}
         />
       </div>

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import SEOHead from '@/components/SEO/SEOHead';
 import Navbar from '@/components/layout/Navbar';
 import { ServiceGrid } from '@/components/ServiceGrid';
-import { BookingModal } from '@/components/BookingModal';
-import { SearchWidget } from '@/components/SearchWidget';
+import { BookingFormModal } from '@/components/booking/BookingFormModal';
+import { ServiceSearch } from '@/components/services/ServiceSearch';
 import { BlogSection } from '@/components/Content/BlogSection';
 import { TestimonialsSection } from '@/components/Content/TestimonialsSection';
 import { EnhancedBookingForm } from '@/components/Forms/EnhancedBookingForm';
@@ -15,22 +15,20 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { usePerformance } from '@/hooks/usePerformance';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useBookingModal } from '@/hooks/useBookingModal';
 import { Star, Users, Award, Shield, Zap, Globe, Phone, Mail, MapPin } from 'lucide-react';
 
 const Index = () => {
-  const [selectedService, setSelectedService] = useState<string>('');
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const metrics = usePerformance();
   const { formatCurrency, formatDate } = useLocalization();
+  const { isOpen, selectedService, openModal, closeModal } = useBookingModal();
 
   const handleBookService = (serviceName: string) => {
-    setSelectedService(serviceName);
-    setIsBookingModalOpen(true);
+    openModal(serviceName);
   };
 
   const handleSearchSelect = (serviceName: string) => {
-    setSelectedService(serviceName);
-    setIsBookingModalOpen(true);
+    openModal(serviceName);
   };
 
   const services = [
@@ -213,7 +211,7 @@ const Index = () => {
 
                 {/* Enhanced Search Widget */}
                 <div className="max-w-md mx-auto mb-8">
-                  <SearchWidget onServiceSelect={handleSearchSelect} />
+                  <ServiceSearch onServiceSelect={handleSearchSelect} />
                 </div>
 
                 {/* Enhanced CTA Buttons */}
@@ -221,7 +219,7 @@ const Index = () => {
                   <Button 
                     size="lg" 
                     className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-8 py-4 rounded-xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:-translate-y-1"
-                    onClick={() => setIsBookingModalOpen(true)}
+                    onClick={() => openModal()}
                   >
                     Book Service Now
                   </Button>
@@ -428,7 +426,7 @@ const Index = () => {
                 size="lg" 
                 variant="secondary"
                 className="bg-white text-primary hover:bg-gray-100 font-semibold px-8 py-4 rounded-xl shadow-xl"
-                onClick={() => setIsBookingModalOpen(true)}
+                onClick={() => openModal()}
               >
                 Start Booking Now
               </Button>
@@ -459,9 +457,9 @@ const Index = () => {
       </div>
 
       {/* Booking Modal */}
-      <BookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
+      <BookingFormModal
+        isOpen={isOpen}
+        onClose={closeModal}
         preselectedService={selectedService}
       />
     </>
