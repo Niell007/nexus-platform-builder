@@ -79,12 +79,12 @@ const Dashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <WelcomeSection 
               userName={userName}
-              lastUpdated={lastUpdated}
+              lastUpdated={lastUpdated.toISOString()}
               onRefresh={refetch}
             />
             <ConnectionStatus 
               status={connectionStatus}
-              lastUpdated={lastUpdated}
+              lastUpdated={lastUpdated.toISOString()}
             />
           </div>
 
@@ -132,7 +132,10 @@ const Dashboard = () => {
               
               {data?.bookingTrends && (
                 <BookingChart 
-                  data={data.bookingTrends}
+                  data={data.bookingTrends.map(trend => ({
+                    ...trend,
+                    label: trend.label || new Date(trend.date).toLocaleDateString()
+                  }))}
                   title="Booking Trends (Last 30 Days)"
                 />
               )}
