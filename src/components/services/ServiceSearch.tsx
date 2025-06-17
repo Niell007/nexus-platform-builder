@@ -1,10 +1,9 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { useServices } from '@/hooks/useServices';
 import { useDebounce } from '@/hooks/useDebounce';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
@@ -24,27 +23,27 @@ export const ServiceSearch: React.FC<ServiceSearchProps> = ({
   const { searchServices } = useServices();
   const debouncedQuery = useDebounce(query, 300);
 
+  const performSearch = useCallback(async (searchQuery: string) => {
+    if (searchQuery.trim().length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const results = await searchServices(searchQuery);
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, [searchServices]);
+
   useEffect(() => {
-    const performSearch = async () => {
-      if (debouncedQuery.trim().length < 2) {
-        setSearchResults([]);
-        return;
-      }
-
-      setIsSearching(true);
-      try {
-        const results = await searchServices(debouncedQuery);
-        setSearchResults(results);
-      } catch (error) {
-        console.error('Search error:', error);
-        setSearchResults([]);
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    performSearch();
-  }, [debouncedQuery, searchServices]);
+    performSearch(debouncedQuery);
+  }, [debouncedQuery, performSearch]);
 
   const handleSelect = (serviceName: string) => {
     onServiceSelect(serviceName);
