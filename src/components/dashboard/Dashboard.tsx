@@ -10,7 +10,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import ServiceBooking from '@/components/ServiceBooking';
+import { BookingFormModal } from '@/components/booking/BookingFormModal';
 import { KPIStatCard } from './KPIStatCard';
 import { BookingChart } from './BookingChart';
 import { RecentBookings } from './RecentBookings';
@@ -20,7 +20,7 @@ import { QuickActions } from './QuickActions';
 import { DashboardSkeleton } from './DashboardSkeleton';
 import { DashboardErrorBoundary } from './DashboardErrorBoundary';
 import { ConnectionStatus } from './ConnectionStatus';
-import { useServiceBookingModal } from '@/hooks/useServiceBookingModal';
+import { useBookingModal } from '@/hooks/useBookingModal';
 import { useRealtimeDashboard } from '@/hooks/useRealtimeDashboard';
 
 /**
@@ -30,7 +30,7 @@ import { useRealtimeDashboard } from '@/hooks/useRealtimeDashboard';
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { showBookingModal, openBookingModal, closeBookingModal } = useServiceBookingModal();
+  const { isOpen, selectedService, openModal, closeModal } = useBookingModal();
   const { data, loading, error, refetch, lastUpdated, connectionStatus } = useRealtimeDashboard();
 
   const handleSignOut = async () => {
@@ -66,7 +66,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-background">
         {/* Navigation Header */}
         <DashboardHeader 
-          onBookService={openBookingModal}
+          onBookService={openModal}
           onSignOut={handleSignOut}
         />
         
@@ -138,7 +138,7 @@ const Dashboard = () => {
               )}
 
               {/* Quick Actions */}
-              <QuickActions onBookService={openBookingModal} />
+              <QuickActions onBookService={openModal} />
             </section>
             
             {/* Recent Bookings with enhanced functionality */}
@@ -166,19 +166,11 @@ const Dashboard = () => {
         </main>
 
         {/* Service Booking Modal */}
-        {showBookingModal && (
-          <div 
-            className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="booking-modal-title"
-            data-testid="booking-modal"
-          >
-            <div className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <ServiceBooking onClose={closeBookingModal} />
-            </div>
-          </div>
-        )}
+        <BookingFormModal
+          isOpen={isOpen}
+          onClose={closeModal}
+          preselectedService={selectedService}
+        />
       </div>
     </DashboardErrorBoundary>
   );
